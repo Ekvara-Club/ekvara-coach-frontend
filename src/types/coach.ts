@@ -76,12 +76,21 @@ export interface CoachAthleteDashboardSummary {
 // Exactement les 5 raisons exposées par le backend (voir
 // AttentionReasonType côté CoachDashboardService) — n'en invente jamais une
 // nouvelle côté frontend (ticket §19).
+// Ticket "Dashboard groupe Coach V1" §21-25 : ATTENDANCE_LOW/GOAL_OVERDUE/
+// PREPARATION_FORFAIT ne sont produites QUE par GET .../groups/:id/dashboard
+// (jamais par le dashboard global, qui reste inchangé) — seuils validés
+// explicitement avec l'utilisateur avant implémentation (voir rapport
+// final) : ATTENDANCE_LOW seulement si recordedSessions >= 3 ET taux < 70%,
+// aucun seuil de proximité compétition.
 export type CoachAttentionReasonType =
   | 'WEIGHT_ABOVE_TARGET'
   | 'WEIGHT_BELOW_TARGET'
   | 'NO_WEIGHT_TARGET'
   | 'METRIC_DECLINING'
-  | 'NO_METRIC_DATA';
+  | 'NO_METRIC_DATA'
+  | 'ATTENDANCE_LOW'
+  | 'GOAL_OVERDUE'
+  | 'PREPARATION_FORFAIT';
 
 export interface CoachAttentionReason {
   type: CoachAttentionReasonType;
@@ -181,6 +190,85 @@ export interface CoachGroupDetail {
   id: string;
   name: string;
   athletes: CoachGroupMember[];
+}
+
+// Ticket "Dashboard groupe Coach V1" — forme de
+// GET /coach/groups/:groupId/dashboard (voir CoachGroupDashboardService.
+// getGroupDashboard). attendance/training portent des agrégats HISTORIQUES
+// basés sur le snapshot coach_training_assignment.group_id (ticket §63-65) :
+// un ancien membre du groupe peut contribuer à ces chiffres sans apparaître
+// dans `athletes` (roster ACTUEL). eligibleAttendances/recordedAttendances
+// (pluriel) : chaque training_session est déjà une paire (athlète, séance),
+// jamais confondu avec eligibleSessions/recordedSessions (CoachAttendanceSummary,
+// scope un seul athlète).
+export interface CoachGroupAttendanceSummary {
+  eligibleAttendances: number;
+  recordedAttendances: number;
+  present: number;
+  absent: number;
+  excused: number;
+  attendanceRate: number | null;
+}
+
+export interface CoachGroupUpcomingTraining {
+  id: string;
+  title: string;
+  type: string | null;
+  startAt: string;
+  endAt: string | null;
+}
+
+export interface CoachGroupTrainingSummary {
+  completedSessionsLast30Days: number;
+  upcomingSessions: CoachGroupUpcomingTraining[];
+}
+
+// byStatus ne contient QUE les statuts réellement présents parmi les
+// préparations pour une compétition à venir (ticket §15) — jamais une entrée
+// à 0 ajoutée artificiellement, le frontend ne doit donc jamais itérer sur
+// PREPARATION_STATUSES ici, seulement sur les clés réellement présentes.
+export interface CoachGroupPreparationSummary {
+  activeCount: number;
+  byStatus: Partial<Record<PreparationStatus, number>>;
+}
+
+export interface GroupAthleteAttendance {
+  recordedSessions: number;
+  present: number;
+  absent: number;
+  excused: number;
+  attendanceRate: number | null;
+}
+
+export interface GroupAthletePreparation {
+  status: string;
+  competitionId: string;
+  competitionName: string;
+}
+
+// Une ligne par athlète du roster ACTUEL du groupe (ticket §7/§64) —
+// attendance30d suit exactement la même formule que CoachAttendanceSummary
+// (même chiffres qu'AthleteDetail à période équivalente, ticket §10).
+export interface GroupAthleteOverview {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+  attendance30d: GroupAthleteAttendance;
+  progression: ProgressionView;
+  nextCompetition: NextCompetitionView | null;
+  preparation: GroupAthletePreparation | null;
+  weight: WeightSummaryView;
+  attentionReasons: CoachAttentionReason[];
+}
+
+export interface CoachGroupDashboard {
+  group: { id: string; name: string; athleteCount: number };
+  attendance: { last30Days: CoachGroupAttendanceSummary };
+  training: CoachGroupTrainingSummary;
+  competitions: CoachUpcomingCompetition[];
+  preparation: CoachGroupPreparationSummary;
+  attention: CoachAthleteNeedingAttention[];
+  athletes: GroupAthleteOverview[];
 }
 
 // GET /coach/athletes/:athleteId/dashboard (voir

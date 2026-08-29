@@ -12,6 +12,7 @@ import type {
   CompetitionCatalogItem,
   CoachExerciseDetail,
   CoachExerciseSummary,
+  CoachGroupDashboard,
   CoachGroupDetail,
   CoachGroupListItem,
   CoachTrainingAttendanceSheet,
@@ -122,6 +123,10 @@ export async function addAthleteToGroup(groupId: string, athleteId: string): Pro
 
 export async function removeAthleteFromGroup(groupId: string, athleteId: string): Promise<void> {
   return apiRequest(`/coach/groups/${groupId}/athletes/${athleteId}`, { method: 'DELETE' });
+}
+
+export async function getCoachGroupDashboard(groupId: string): Promise<CoachGroupDashboard> {
+  return apiRequest(`/coach/groups/${groupId}/dashboard`);
 }
 
 // Ticket #3 §3 : source primaire de la fiche athlète (identité, groupes,
