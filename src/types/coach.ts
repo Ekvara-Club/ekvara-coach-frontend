@@ -308,6 +308,55 @@ export interface CoachTrainingDetail {
   };
 }
 
+// Ticket "Présences Coach V1" : statut fermé côté backend (varchar contrôlé,
+// jamais accentué) — contrairement à CoachTrainingDetail.status, celui-ci
+// est une liste réellement fermée (present/absent/excuse), reprise telle
+// quelle du contrat backend (voir training-attendance-status.ts côté API).
+export type AttendanceStatus = 'present' | 'absent' | 'excuse';
+
+// Forme de GET /coach/trainings/:id/attendance (voir
+// CoachTrainingAttendanceService.getAttendanceSheet). `groupName` = libellé
+// snapshotté à la publication (coach_training_assignment.group_id), jamais
+// recalculé depuis la composition actuelle du groupe — null si assignation
+// individuelle. `attendance` null = non renseigné, JAMAIS confondu avec
+// absent (ticket §21, CRITIQUE).
+export interface CoachTrainingAttendanceAthlete {
+  athleteId: string;
+  firstName: string | null;
+  lastName: string | null;
+  groupName: string | null;
+  attendance: { status: AttendanceStatus; note: string | null; recordedAt: string } | null;
+}
+
+export interface CoachTrainingAttendanceSheet {
+  training: {
+    id: string;
+    title: string;
+    type: string | null;
+    startAt: string;
+    endAt: string | null;
+    status: string | null;
+  };
+  athletes: CoachTrainingAttendanceAthlete[];
+}
+
+// Forme de GET /coach/athletes/:athleteId/attendance/summary (voir
+// CoachTrainingAttendanceService.getAthleteSummary). Un seul horizon en V1
+// (ticket §27, décision explicite : pas de last90Days/allTime pour l'instant).
+// attendanceRate = present / recordedSessions (jamais / eligibleSessions,
+// voir ticket §28-29) — null si aucune séance renseignée (jamais 0, qui
+// suggérerait à tort "0% de présence").
+export interface CoachAttendanceSummary {
+  last30Days: {
+    eligibleSessions: number;
+    recordedSessions: number;
+    present: number;
+    absent: number;
+    excused: number;
+    attendanceRate: number | null;
+  };
+}
+
 // Ticket #5 : forme de GET /coach/exercises (voir CoachExercisesService.
 // toLibraryView) — contrairement aux séances, la liste porte déjà
 // athleteCount ET groups directement, jamais besoin d'un GET détail par

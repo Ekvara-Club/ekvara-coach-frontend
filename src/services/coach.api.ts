@@ -1,8 +1,10 @@
 import type {
   AddCoachAthleteResult,
+  AttendanceStatus,
   CoachAthleteDashboardSummary,
   CoachAthleteDetailDashboard,
   CoachAthleteRosterItem,
+  CoachAttendanceSummary,
   CoachCompetitionDetailView,
   CoachCompetitionPreparationSummary,
   CoachCompetitionsListView,
@@ -12,6 +14,7 @@ import type {
   CoachExerciseSummary,
   CoachGroupDetail,
   CoachGroupListItem,
+  CoachTrainingAttendanceSheet,
   CoachTrainingDetail,
   CoachTrainingSummary,
   CreateCoachExerciseInput,
@@ -253,6 +256,30 @@ export async function replaceCoachTrainingAssignments(
 // via response.text() (voir plus haut, ticket #2 §fix).
 export async function cancelCoachTraining(trainingId: string): Promise<CoachTrainingDetail> {
   return apiRequest(`/coach/trainings/${trainingId}`, { method: 'DELETE' });
+}
+
+export interface PutAttendancePayload {
+  attendances: { athleteId: string; status: AttendanceStatus; note?: string }[];
+}
+
+export async function getCoachTrainingAttendance(trainingId: string): Promise<CoachTrainingAttendanceSheet> {
+  return apiRequest(`/coach/trainings/${trainingId}/attendance`);
+}
+
+// Batch (ticket §11 : une feuille de présence = une action collective,
+// jamais 1 requête par athlète) — liste complète du roster de la séance
+// (ticket §12, décision V1), pas un delta. 409 si la séance est annulée ou
+// pas encore commencée (voir CoachTrainingAttendanceService.putAttendance) :
+// l'appelant (AttendanceModal) doit garder la modal ouverte sur erreur.
+export async function putCoachTrainingAttendance(
+  trainingId: string,
+  payload: PutAttendancePayload,
+): Promise<CoachTrainingAttendanceSheet> {
+  return apiRequest(`/coach/trainings/${trainingId}/attendance`, jsonInit('PUT', payload));
+}
+
+export async function getCoachAthleteAttendanceSummary(athleteId: string): Promise<CoachAttendanceSummary> {
+  return apiRequest(`/coach/athletes/${athleteId}/attendance/summary`);
 }
 
 export async function getCoachExercises(): Promise<CoachExerciseSummary[]> {
