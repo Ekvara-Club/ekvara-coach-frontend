@@ -1,6 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getCoachAthletes, getCoachDashboardAthletes, getCoachGroups } from '../services/coach.api';
-import type { AthleteGroupRef, CoachAthleteRosterItem, CoachGroupListItem } from '../types/coach';
+import {
+  getCoachAthletes,
+  getCoachDashboardAthletes,
+  getCoachGroups,
+  getCoachInvitations,
+  revokeCoachInvitation,
+} from '../services/coach.api';
+import type {
+  AthleteGroupRef,
+  CoachAthleteRosterItem,
+  CoachGroupListItem,
+  CoachInvitationListItem,
+} from '../types/coach';
 import { rosterAthleteName } from '../utils/format';
 import { normalizeForSearch } from '../utils/search';
 import { handleNavClick } from '../utils/navigation';
@@ -9,6 +20,8 @@ import Button from '../components/ui/Button';
 import SectionLabel from '../components/ui/SectionLabel';
 import DropdownMenu from '../components/ui/DropdownMenu';
 import AddAthleteModal from '../components/athletes/AddAthleteModal';
+import InviteAthleteModal from '../components/athletes/InviteAthleteModal';
+import PendingInvitationsList from '../components/athletes/PendingInvitationsList';
 import ManageGroupsModal from '../components/athletes/ManageGroupsModal';
 import RemoveAthleteModal from '../components/athletes/RemoveAthleteModal';
 
@@ -22,11 +35,14 @@ function AthletesPage() {
   const [athletes, setAthletes] = useState<CoachAthleteRosterItem[] | null>(null);
   const [groupsByAthleteId, setGroupsByAthleteId] = useState<Map<string, AthleteGroupRef[]>>(new Map());
   const [allGroups, setAllGroups] = useState<CoachGroupListItem[]>([]);
+  const [invitations, setInvitations] = useState<CoachInvitationListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
 
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [revokingInvitationId, setRevokingInvitationId] = useState<string | null>(null);
   const [manageGroupsAthlete, setManageGroupsAthlete] = useState<CoachAthleteRosterItem | null>(null);
   const [removeCandidate, setRemoveCandidate] = useState<CoachAthleteRosterItem | null>(null);
 
@@ -41,12 +57,16 @@ function AthletesPage() {
     });
   }, []);
 
+  const loadInvitations = useCallback(() => {
+    return getCoachInvitations().then(setInvitations);
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError(null);
 
-    Promise.all([loadRoster(), getCoachGroups().then(setAllGroups)])
+    Promise.all([loadRoster(), getCoachGroups().then(setAllGroups), loadInvitations()])
       .catch((err: Error) => {
         if (!cancelled) setError(err.message);
       })
@@ -57,11 +77,28 @@ function AthletesPage() {
     return () => {
       cancelled = true;
     };
-  }, [loadRoster]);
+  }, [loadRoster, loadInvitations]);
 
   function refreshAfterMutation() {
     loadRoster().catch((err: Error) => setError(err.message));
   }
+
+  async function handleRevokeInvitation(invitationId: string) {
+    setRevokingInvitationId(invitationId);
+    try {
+      await revokeCoachInvitation(invitationId);
+      await loadInvitations();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setRevokingInvitationId(null);
+    }
+  }
+
+  const pendingInvitations = useMemo(
+    () => invitations.filter((invitation) => invitation.status === 'active'),
+    [invitations],
+  );
 
   const filteredAthletes = useMemo(() => {
     if (!athletes) return [];
@@ -79,11 +116,27 @@ function AthletesPage() {
           </h1>
           <p className="mt-1 text-sm text-ekvara-black/60">Le roster que tu encadres.</p>
         </div>
-        {athletes && athletes.length > 0 && (
-          <Button variant="primary" onClick={() => setAddModalOpen(true)}>
-            + Ajouter un athlète
+        <div className="flex flex-wrap gap-3">
+          <Button variant="secondary" onClick={() => setInviteModalOpen(true)}>
+            Inviter un athlète
           </Button>
-        )}
+          {athletes && athletes.length > 0 && (
+            <Button variant="primary" onClick={() => setAddModalOpen(true)}>
+              + Ajouter un athlète
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <SectionLabel>Invitations en attente</SectionLabel>
+        <div className="mt-3">
+          <PendingInvitationsList
+            invitations={pendingInvitations}
+            onRevoke={handleRevokeInvitation}
+            revokingId={revokingInvitationId}
+          />
+        </div>
       </div>
 
       <div className="mt-8">
@@ -165,6 +218,14 @@ function AthletesPage() {
       </div>
 
       {addModalOpen && <AddAthleteModal onClose={() => setAddModalOpen(false)} onAdded={refreshAfterMutation} />}
+
+      {inviteModalOpen && (
+        <InviteAthleteModal
+          groups={allGroups}
+          onClose={() => setInviteModalOpen(false)}
+          onCreated={() => loadInvitations().catch((err: Error) => setError(err.message))}
+        />
+      )}
 
       {manageGroupsAthlete && (
         <ManageGroupsModal

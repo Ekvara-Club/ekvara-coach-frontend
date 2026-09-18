@@ -172,6 +172,29 @@ export interface AddCoachAthleteResult {
   athleteId: string;
 }
 
+// Forme de POST /coach/invitations (voir InvitationsService.createInvitation
+// côté backend) : `code` n'est présent QUE dans cette réponse de création,
+// jamais renvoyé par GET /coach/invitations (le backend ne stocke jamais le
+// code en clair — voir ticket "Clubs, invitations & inscription Athlete
+// contrôlée V1" §"LISTE DES INVITATIONS").
+export interface CreateCoachInvitationResult {
+  invitationId: string;
+  code: string;
+  expiresAt: string;
+}
+
+export type CoachInvitationStatus = 'active' | 'used' | 'revoked' | 'expired';
+
+// Forme de GET /coach/invitations (voir InvitationsService.listInvitations).
+export interface CoachInvitationListItem {
+  id: string;
+  createdAt: string;
+  expiresAt: string;
+  usedAt: string | null;
+  revokedAt: string | null;
+  status: CoachInvitationStatus;
+}
+
 // Forme d'un membre dans GET /coach/groups/:groupId (voir
 // CoachGroupsService.toGroupMemberView) — pas de grade/niveauSportif ici,
 // seulement ce que le backend expose réellement pour cette route.

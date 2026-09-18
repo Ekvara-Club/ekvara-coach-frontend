@@ -15,10 +15,12 @@ import type {
   CoachGroupDashboard,
   CoachGroupDetail,
   CoachGroupListItem,
+  CoachInvitationListItem,
   CoachTrainingAttendanceSheet,
   CoachTrainingDetail,
   CoachTrainingSummary,
   CreateCoachExerciseInput,
+  CreateCoachInvitationResult,
   Goal,
   GoalStatus,
   GoalStepView,
@@ -95,6 +97,21 @@ export async function addCoachAthlete(email: string): Promise<AddCoachAthleteRes
 
 export async function removeCoachAthlete(athleteId: string): Promise<void> {
   return apiRequest(`/coach/athletes/${athleteId}`, { method: 'DELETE' });
+}
+
+// Le club est dérivé du coach authentifié côté backend, jamais transmis ici
+// (voir InvitationsService.createInvitation) : `code` n'est présent que dans
+// CETTE réponse, jamais renvoyé par getCoachInvitations() ensuite.
+export async function createCoachInvitation(assignedGroupId?: string): Promise<CreateCoachInvitationResult> {
+  return apiRequest('/coach/invitations', jsonInit('POST', assignedGroupId ? { assignedGroupId } : {}));
+}
+
+export async function getCoachInvitations(): Promise<CoachInvitationListItem[]> {
+  return apiRequest('/coach/invitations');
+}
+
+export async function revokeCoachInvitation(invitationId: string): Promise<void> {
+  return apiRequest(`/coach/invitations/${invitationId}/revoke`, { method: 'PATCH' });
 }
 
 export async function getCoachGroups(): Promise<CoachGroupListItem[]> {
