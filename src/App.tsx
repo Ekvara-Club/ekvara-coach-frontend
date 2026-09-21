@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CoachAuthProvider, useCoachAuth } from './contexts/CoachAuthContext';
+import { consumeReturnTo, rememberReturnTo } from './services/session';
 import { navigateTo } from './utils/navigation';
 import Header from './components/layout/Header';
 import LoginPage from './pages/LoginPage';
@@ -35,12 +36,14 @@ function AppRoutes() {
     if (loading || accessDenied) return;
 
     if (!coach && !PUBLIC_PATHS.includes(pathname)) {
+      // Session perdue ou jamais ouverte : on retrouvera cette page après login.
+      rememberReturnTo(pathname);
       navigateTo('/login', 'replace');
       return;
     }
 
     if (coach && PUBLIC_PATHS.includes(pathname)) {
-      navigateTo('/', 'replace');
+      navigateTo(consumeReturnTo() ?? '/', 'replace');
     }
   }, [coach, accessDenied, loading, pathname]);
 
@@ -64,8 +67,11 @@ function AppRoutes() {
   const athleteDetailMatch = pathname.match(/^\/athletes\/([^/]+)$/);
   const competitionDetailMatch = pathname.match(/^\/competitions\/([^/]+)$/);
 
+  // key = id du coach courant : si la session est remplacée par un autre coach,
+  // Header et pages sont remontés et ne gardent aucune donnée de l'ancien
+  // (sans jamais recharger la fenêtre).
   return (
-    <div className="min-h-screen bg-ekvara-surface">
+    <div key={coach.id} className="min-h-screen bg-ekvara-surface">
       <Header />
       {pathname === '/athletes' ? (
         <AthletesPage />

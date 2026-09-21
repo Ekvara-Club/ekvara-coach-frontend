@@ -1,9 +1,14 @@
 import type { CoachProfile, LoginPayload } from '../types/auth';
-import { notifyUnauthorized } from './session';
+import { API_URL, withAppContext } from './apiClient';
 
-const API_URL = import.meta.env.VITE_API_URL;
-
-const AUTH_FETCH_OPTIONS: RequestInit = { credentials: 'include' };
+// withAppContext : `credentials: 'include'` + X-Ekvara-App: coach (cookie de
+// session COACH, indépendant de celui de l'app athlète). Ces appels n'utilisent
+// volontairement pas apiFetch : un 401/403 de login/me est un état normal
+// (mauvais mot de passe, pas connecté, compte sans profil coach), pas un signal
+// de session à propager.
+function authFetch(path: string, init?: RequestInit): Promise<Response> {
+  return fetch(`${API_URL}${path}`, withAppContext(init));
+}
 
 async function extractErrorMessage(response: Response): Promise<string> {
   try {
@@ -31,8 +36,7 @@ export class CoachAccessForbiddenError extends Error {
 // n'est PAS utilisé pour déterminer l'identité coach. Seul le statut HTTP
 // compte ici ; l'identité coach est déterminée séparément par getCoachMe().
 export async function login(payload: LoginPayload): Promise<void> {
-  const response = await fetch(`${API_URL}/auth/login`, {
-    ...AUTH_FETCH_OPTIONS,
+  const response = await authFetch('/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -44,20 +48,21 @@ export async function login(payload: LoginPayload): Promise<void> {
 }
 
 export async function logout(): Promise<void> {
-  const response = await fetch(`${API_URL}/auth/logout`, { ...AUTH_FETCH_OPTIONS, method: 'POST' });
+  const response = await authFetch('/auth/logout', { method: 'POST' });
   if (!response.ok) {
     throw new Error(await extractErrorMessage(response));
   }
 }
 
-// null = pas de session (401, signalé via notifyUnauthorized) ; lève
-// CoachAccessForbiddenError si la session est valide mais sans profil coach
-// (403) ; renvoie le profil coach sinon.
+// null = pas de session coach (401) ; lève CoachAccessForbiddenError si la
+// session est valide mais sans profil coach (403) ; renvoie le profil coach
+// sinon. Sert de vérification de session : c'est CoachAuthContext qui décide
+// quoi faire d'un null/403 selon le moment (démarrage, login, revalidation),
+// donc aucun signal global n'est émis ici.
 export async function getCoachMe(): Promise<CoachProfile | null> {
-  const response = await fetch(`${API_URL}/coach/me`, AUTH_FETCH_OPTIONS);
+  const response = await authFetch('/coach/me');
 
   if (response.status === 401) {
-    notifyUnauthorized();
     return null;
   }
   if (response.status === 403) {

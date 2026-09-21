@@ -30,9 +30,7 @@ import type {
   UpdateCoachExerciseInput,
 } from '../types/coach';
 import type { CompetitionEntriesResponse } from '../types/competition-entries';
-import { notifyUnauthorized } from './session';
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { apiFetch } from './apiClient';
 
 // Le statut HTTP est conservé (pas seulement le message texte) : permet aux
 // appelants (ex. AddAthleteModal) de mapper vers un wording propre par code,
@@ -57,10 +55,10 @@ async function extractErrorMessage(response: Response): Promise<string> {
 }
 
 async function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_URL}${path}`, { credentials: 'include', ...init });
-  if (response.status === 401) {
-    notifyUnauthorized();
-  }
+  // 401 -> session invalide (CoachAuthContext renvoie au login) ; 403 ->
+  // revalidation de session demandée mais l'erreur reste un vrai 403 pour
+  // l'appelant (voir apiClient.ts).
+  const response = await apiFetch(path, init);
   if (!response.ok) {
     throw new ApiError(await extractErrorMessage(response), response.status);
   }

@@ -3,7 +3,7 @@ import { useCoachAuth } from '../contexts/CoachAuthContext';
 import Button from '../components/ui/Button';
 
 function LoginPage() {
-  const { login } = useCoachAuth();
+  const { login, sessionNotice } = useCoachAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -33,6 +33,14 @@ function LoginPage() {
             Coach
           </span>
         </div>
+
+        {/* Session perdue (expirée, remplacée) : on l'explique ici au lieu de
+            laisser l'utilisateur deviner pourquoi il est déconnecté. */}
+        {sessionNotice && (
+          <p role="status" className="mb-4 rounded-md bg-ekvara-black/5 px-3 py-2 text-sm text-ekvara-black">
+            {sessionNotice}
+          </p>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <div>
