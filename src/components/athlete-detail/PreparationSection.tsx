@@ -1,12 +1,27 @@
 import type { CoachAthleteDetailDashboard } from '../../types/coach';
 import { formatDate, formatDaysUntil, formatTime } from '../../utils/date';
+import { handleNavClick } from '../../utils/navigation';
+import { formatPlannedCategories, formatPreparationStatus } from '../../utils/preparation';
 import SectionLabel from '../ui/SectionLabel';
 
 // Ticket #3 §5. nextCompetition.daysUntil est déjà calculé par le backend
 // (CoachDashboardService) : jamais recalculé côté frontend, contrairement à
 // UpcomingCompetitions.tsx (agrégat groupe) qui n'a que startDate brut.
+//
+// Ticket #15 : nextCompetition peut venir d'une participation OU d'une simple
+// préparation de ce coach (règle unique côté backend, partagée avec la vue
+// Athlete). Catégories OFFICIELLES (participation) prioritaires, la catégorie
+// prévue ne sert que de repli ; une préparation seule n'est jamais présentée
+// comme une inscription.
 function PreparationSection({ athlete }: { athlete: CoachAthleteDetailDashboard }) {
   const { nextCompetition, nextTraining } = athlete;
+
+  const categories = nextCompetition
+    ? formatPlannedCategories(
+        nextCompetition.ageCategory ?? nextCompetition.preparation?.targetAgeCategory ?? null,
+        nextCompetition.weightCategory ?? nextCompetition.preparation?.targetWeightCategory ?? null,
+      )
+    : null;
 
   if (!nextCompetition && !nextTraining) {
     return (
@@ -24,7 +39,13 @@ function PreparationSection({ athlete }: { athlete: CoachAthleteDetailDashboard 
         {nextCompetition ? (
           <div className="mt-3">
             <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-              <p className="font-display text-base font-bold text-ekvara-black">{nextCompetition.name}</p>
+              <a
+                href={`/competitions/${nextCompetition.id}`}
+                onClick={(event) => handleNavClick(event, `/competitions/${nextCompetition.id}`)}
+                className="font-display text-base font-bold text-ekvara-black hover:underline"
+              >
+                {nextCompetition.name}
+              </a>
               <span className="whitespace-nowrap text-sm font-semibold text-ekvara-black">
                 {formatDaysUntil(nextCompetition.daysUntil)}
               </span>
@@ -34,8 +55,16 @@ function PreparationSection({ athlete }: { athlete: CoachAthleteDetailDashboard 
               {[nextCompetition.city, nextCompetition.country].filter(Boolean).length > 0 &&
                 ` · ${[nextCompetition.city, nextCompetition.country].filter(Boolean).join(', ')}`}
             </p>
-            {nextCompetition.weightCategory && (
-              <p className="mt-0.5 text-sm text-ekvara-black/60">{nextCompetition.weightCategory}</p>
+            {categories && <p className="mt-0.5 text-sm text-ekvara-black/60">{categories}</p>}
+            {nextCompetition.preparation && (
+              <p className="mt-0.5 text-sm text-ekvara-black/60">
+                <span className="font-semibold text-ekvara-black">
+                  {formatPreparationStatus(nextCompetition.preparation.status)}
+                </span>
+                {nextCompetition.source === 'coach_preparation' && (
+                  <span className="ml-2">Inscription officielle non confirmée</span>
+                )}
+              </p>
             )}
           </div>
         ) : (

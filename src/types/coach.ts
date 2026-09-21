@@ -29,6 +29,17 @@ export interface ProgressionView {
   overallStatus: null;
 }
 
+// Préparation de CE coach pour la compétition (jamais celle d'un autre coach,
+// jamais la note privée : le backend ne l'envoie pas).
+export interface NextCompetitionPreparationView {
+  status: string;
+  targetAgeCategory: string | null;
+  targetWeightCategory: string | null;
+}
+
+// weightCategory/ageCategory = catégories OFFICIELLES de la participation
+// (null pour une compétition seulement préparée) ; les catégories PRÉVUES
+// vivent dans `preparation`, jamais mélangées à l'officiel.
 export interface NextCompetitionView {
   id: string;
   name: string;
@@ -37,6 +48,9 @@ export interface NextCompetitionView {
   country: string | null;
   level: string | null;
   weightCategory: string | null;
+  ageCategory: string | null;
+  source: 'participation' | 'coach_preparation';
+  preparation: NextCompetitionPreparationView | null;
   daysUntil: number;
 }
 
