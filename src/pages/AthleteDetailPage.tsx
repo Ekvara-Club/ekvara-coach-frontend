@@ -14,6 +14,7 @@ import WeightSection from '../components/athlete-detail/WeightSection';
 import ProgressionSection from '../components/athlete-detail/ProgressionSection';
 import GoalsSection from '../components/athlete-detail/GoalsSection';
 import AttendanceSection from '../components/athlete-detail/AttendanceSection';
+import WtProfileSection from '../components/athlete-detail/WtProfileSection';
 
 interface AthleteDetailPageProps {
   athleteId: string;
@@ -127,6 +128,12 @@ function AthleteDetailPage({ athleteId }: AthleteDetailPageProps) {
                 onMeasurementAdded={refreshAfterMeasurement}
               />
               <GoalsSection athleteId={athleteId} goals={goals} onChanged={refreshAfterGoalChange} />
+              <WtProfileSection
+                athleteId={athleteId}
+                athleteFirstName={dashboard.firstName}
+                wtProfile={dashboard.wtProfile}
+                onChanged={loadDashboard}
+              />
             </div>
           </div>
         )}

@@ -29,6 +29,7 @@ function athlete(nextCompetition: NextCompetitionView | null, hasTraining = true
     grade: null,
     sportLevel: null,
     condition: { status: 'actif', note: null, expectedReturn: null, updatedAt: null },
+    wtProfile: null,
     groups: [],
     weight: { currentWeight: null, measuredAt: null, target: null, differenceToTarget: null, weeklyChange: null },
     progression: { improvedCount: 0, decliningCount: 0, unknownCount: 0, evaluatedCount: 0, overallStatus: null },

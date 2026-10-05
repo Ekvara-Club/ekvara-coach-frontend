@@ -19,6 +19,7 @@ import type {
   CoachTrainingAttendanceSheet,
   CoachTrainingDetail,
   CoachTrainingSeriesCreated,
+  WtAthleteRecord,
   CoachTrainingSummary,
   CreateCoachExerciseInput,
   CreateCoachInvitationResult,
@@ -153,6 +154,15 @@ export async function getCoachGroupDashboard(groupId: string): Promise<CoachGrou
 // GET /coach/athletes/:athleteId/weight ne sont donc jamais appelés ici :
 // le premier n'apporte rien de plus (et expose email/club inutiles), le
 // second est un doublon exact de `dashboard.weight`.
+// Décision du coach sur la demande de lien World Taekwondo de SON athlète.
+export async function decideAthleteWtProfile(athleteId: string, decision: 'confirm' | 'reject'): Promise<{ status: string }> {
+  return apiRequest(`/coach/athletes/${athleteId}/wt-profile/${decision}`, { method: 'POST' });
+}
+
+export async function getWtAthleteRecord(externalAthleteId: string): Promise<WtAthleteRecord> {
+  return apiRequest(`/international-athletes/${externalAthleteId}`);
+}
+
 export async function getCoachAthleteDashboard(athleteId: string): Promise<CoachAthleteDetailDashboard> {
   return apiRequest(`/coach/athletes/${athleteId}/dashboard`);
 }

@@ -19,6 +19,7 @@ describe('état de forme athlète — côté coach', () => {
     expect(attentionReasonLabel('CONDITION_INJURED')).toBe('Déclaré blessé');
     expect(attentionReasonLabel('CONDITION_SICK')).toBe('Déclaré malade');
     expect(attentionReasonLabel('CONDITION_ABSENT')).toBe('Déclaré absent');
+    expect(attentionReasonLabel('WT_LINK_PENDING')).toBe('Profil World Taekwondo à confirmer');
   });
 
   it('notification de changement d\'état -> fiche de l\'athlète ; autres -> tableau de bord', () => {

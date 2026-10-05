@@ -81,6 +81,21 @@ export interface CoachAthleteCondition {
   updatedAt: string | null;
 }
 
+// Profil World Taekwondo relié ou demandé par l'athlète (voir
+// athlete_wt_link) : "pending" = en attente de la décision du coach.
+export interface CoachAthleteWtProfile {
+  status: 'pending' | 'confirmed';
+  externalAthleteId: string;
+  displayName: string;
+  countryCode: string | null;
+}
+
+// GET /international-athletes/:id (catalogue public, lisible par tout compte
+// connecté) : seul le bilan enregistré est utilisé côté coach.
+export interface WtAthleteRecord {
+  stats: { recorded: { fights: number; wins: number; losses: number; competitions: number } };
+}
+
 export interface CoachAthleteDashboardSummary {
   id: string;
   firstName: string | null;
@@ -89,6 +104,7 @@ export interface CoachAthleteDashboardSummary {
   grade: string | null;
   sportLevel: string | null;
   condition: CoachAthleteCondition;
+  wtProfile: CoachAthleteWtProfile | null;
   groups: AthleteGroupRef[];
   weight: WeightSummaryView;
   progression: ProgressionView;
@@ -115,6 +131,7 @@ export type CoachAttentionReasonType =
   | 'CONDITION_INJURED'
   | 'CONDITION_SICK'
   | 'CONDITION_ABSENT'
+  | 'WT_LINK_PENDING'
   | 'ATTENDANCE_LOW'
   | 'GOAL_OVERDUE'
   | 'PREPARATION_FORFAIT';

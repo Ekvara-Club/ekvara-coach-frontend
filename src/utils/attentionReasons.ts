@@ -13,6 +13,7 @@ const LABELS: Record<CoachAttentionReasonType, string> = {
   CONDITION_INJURED: 'Déclaré blessé',
   CONDITION_SICK: 'Déclaré malade',
   CONDITION_ABSENT: 'Déclaré absent',
+  WT_LINK_PENDING: 'Profil World Taekwondo à confirmer',
   ATTENDANCE_LOW: 'Assiduité faible',
   GOAL_OVERDUE: 'Objectif arrivé à échéance',
   PREPARATION_FORFAIT: 'Préparation : forfait',
