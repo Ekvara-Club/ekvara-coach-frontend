@@ -2,7 +2,8 @@ import { useState, type FormEvent } from 'react';
 import Modal from '../ui/Modal';
 import Button from '../ui/Button';
 import DestinataireFields from '../shared/DestinataireFields';
-import { createCoachTraining, updateCoachTraining } from '../../services/coach.api';
+import { createCoachTraining, createCoachTrainingSeries, updateCoachTraining } from '../../services/coach.api';
+import { isoWeekdayOf, previewSeries, SERIES_DURATIONS, SERIES_WEEKDAYS } from '../../utils/trainingSeries';
 import type { CoachAthleteRosterItem, CoachGroupListItem, CoachTrainingDetail } from '../../types/coach';
 
 interface TrainingFormModalProps {
@@ -43,6 +44,8 @@ function splitIsoToLocal(iso: string): { date: string; time: string } {
   };
 }
 
+const PREVIEW_DATE_FORMAT: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+
 const inputClass =
   'mt-1 w-full rounded-md border border-ekvara-black/15 bg-ekvara-surface px-3 py-2.5 text-sm text-ekvara-black outline-none focus:border-ekvara-black/40';
 
@@ -66,6 +69,12 @@ function TrainingFormModal({ mode, training, groups, roster, membershipMap, onCl
   const [level, setLevel] = useState(training?.level ?? '');
   const [description, setDescription] = useState(training?.description ?? '');
 
+  // Séance récurrente (création uniquement) : une séance par jour coché,
+  // chaque semaine, à partir de `date` et pendant `durationMonths`.
+  const [repeat, setRepeat] = useState(false);
+  const [weekdays, setWeekdays] = useState<Set<number>>(new Set());
+  const [durationMonths, setDurationMonths] = useState(3);
+
   const [selectedGroupIds, setSelectedGroupIds] = useState<Set<string>>(new Set());
   const [selectedAthleteIds, setSelectedAthleteIds] = useState<Set<string>>(new Set());
 
@@ -81,6 +90,24 @@ function TrainingFormModal({ mode, training, groups, roster, membershipMap, onCl
       return next;
     });
   }
+
+  function toggleRepeat(checked: boolean) {
+    setRepeat(checked);
+    // Pré-coche le jour de la date déjà choisie : "tous les mercredis" est
+    // le cas le plus courant, le coach n'a rien à refaire.
+    if (checked && weekdays.size === 0 && date) setWeekdays(new Set([isoWeekdayOf(date)]));
+  }
+
+  function toggleWeekday(day: number) {
+    setWeekdays((current) => {
+      const next = new Set(current);
+      if (next.has(day)) next.delete(day);
+      else next.add(day);
+      return next;
+    });
+  }
+
+  const preview = repeat && date ? previewSeries(date, [...weekdays], durationMonths) : null;
 
   function toggleAthlete(athleteId: string) {
     setSelectedAthleteIds((current) => {
@@ -104,6 +131,11 @@ function TrainingFormModal({ mode, training, groups, roster, membershipMap, onCl
     }
     if (endTime && endTime <= startTime) {
       setValidationError("L'heure de fin doit être après l'heure de début.");
+      return;
+    }
+
+    if (mode === 'create' && repeat && weekdays.size === 0) {
+      setValidationError('Choisis au moins un jour de la semaine.');
       return;
     }
 
@@ -134,7 +166,23 @@ function TrainingFormModal({ mode, training, groups, roster, membershipMap, onCl
     };
 
     try {
-      if (mode === 'create') {
+      if (mode === 'create' && repeat) {
+        await createCoachTrainingSeries({
+          title: contentPayload.title,
+          type: contentPayload.type,
+          subType: contentPayload.subType,
+          location: contentPayload.location,
+          level: contentPayload.level,
+          description: contentPayload.description,
+          startDate: date,
+          startTime,
+          endTime: endTime || undefined,
+          weekdays: [...weekdays].sort((a, b) => a - b),
+          durationMonths,
+          groupIds: [...selectedGroupIds],
+          athleteIds: [...selectedAthleteIds],
+        });
+      } else if (mode === 'create') {
         await createCoachTraining({
           ...contentPayload,
           groupIds: [...selectedGroupIds],
@@ -193,7 +241,7 @@ function TrainingFormModal({ mode, training, groups, roster, membershipMap, onCl
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div>
               <label htmlFor="training-date" className="text-sm font-medium text-ekvara-black">
-                Date
+                {repeat ? 'À partir du' : 'Date'}
               </label>
               <input id="training-date" type="date" value={date} onChange={(event) => setDate(event.target.value)} className={inputClass} />
             </div>
@@ -210,6 +258,73 @@ function TrainingFormModal({ mode, training, groups, roster, membershipMap, onCl
               <input id="training-end" type="time" value={endTime} onChange={(event) => setEndTime(event.target.value)} className={inputClass} />
             </div>
           </div>
+
+          {mode === 'create' && (
+            <div className="rounded-md border border-ekvara-black/10 p-3">
+              <label className="flex items-center gap-2 text-sm font-medium text-ekvara-black">
+                <input type="checkbox" checked={repeat} onChange={(event) => toggleRepeat(event.target.checked)} />
+                Répéter chaque semaine
+              </label>
+
+              {repeat && (
+                <div className="mt-3 flex flex-col gap-3">
+                  <div>
+                    <p id="training-weekdays-label" className="text-sm font-medium text-ekvara-black">
+                      Jours
+                    </p>
+                    <div role="group" aria-labelledby="training-weekdays-label" className="mt-1 flex flex-wrap gap-1.5">
+                      {SERIES_WEEKDAYS.map((day) => {
+                        const active = weekdays.has(day.value);
+                        return (
+                          <button
+                            key={day.value}
+                            type="button"
+                            onClick={() => toggleWeekday(day.value)}
+                            aria-pressed={active}
+                            aria-label={day.label}
+                            title={day.label}
+                            className={`h-9 w-9 rounded-full text-sm font-semibold transition-colors ${
+                              active
+                                ? 'bg-ekvara-black text-ekvara-surface'
+                                : 'border border-ekvara-black/15 bg-ekvara-surface text-ekvara-black/70 hover:border-ekvara-black/30'
+                            }`}
+                          >
+                            {day.short}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="training-duration" className="text-sm font-medium text-ekvara-black">
+                      Pendant
+                    </label>
+                    <select
+                      id="training-duration"
+                      value={durationMonths}
+                      onChange={(event) => setDurationMonths(Number(event.target.value))}
+                      className={inputClass}
+                    >
+                      {SERIES_DURATIONS.map((option) => (
+                        <option key={option.months} value={option.months}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {preview && preview.count > 0 && preview.first && preview.last && (
+                    <p className="text-sm text-ekvara-black/70" aria-live="polite">
+                      {preview.count} {preview.count > 1 ? 'séances' : 'séance'}, du{' '}
+                      {preview.first.toLocaleDateString('fr-FR', PREVIEW_DATE_FORMAT)} au{' '}
+                      {preview.last.toLocaleDateString('fr-FR', PREVIEW_DATE_FORMAT)}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           <div>
             <label htmlFor="training-location" className="text-sm font-medium text-ekvara-black">
@@ -263,7 +378,15 @@ function TrainingFormModal({ mode, training, groups, roster, membershipMap, onCl
             Annuler
           </Button>
           <Button type="submit" variant="primary" disabled={submitting}>
-            {submitting ? (mode === 'create' ? 'Création...' : 'Enregistrement...') : mode === 'create' ? 'Créer' : 'Enregistrer'}
+            {submitting
+              ? mode === 'create'
+                ? 'Création...'
+                : 'Enregistrement...'
+              : mode === 'edit'
+                ? 'Enregistrer'
+                : preview && preview.count > 1
+                  ? `Créer ${preview.count} séances`
+                  : 'Créer'}
           </Button>
         </div>
       </form>

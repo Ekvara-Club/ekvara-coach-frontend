@@ -18,6 +18,7 @@ import type {
   CoachInvitationListItem,
   CoachTrainingAttendanceSheet,
   CoachTrainingDetail,
+  CoachTrainingSeriesCreated,
   CoachTrainingSummary,
   CreateCoachExerciseInput,
   CreateCoachInvitationResult,
@@ -255,6 +256,32 @@ export async function createCoachTraining(
   payload: CoachTrainingContentPayload & { title: string; startAt: string; groupIds?: string[]; athleteIds?: string[] },
 ): Promise<CoachTrainingDetail> {
   return apiRequest('/coach/trainings', jsonInit('POST', payload));
+}
+
+// Séance récurrente : horaire en heure murale (startDate + startTime/endTime),
+// jamais une liste d'instants calculée ici — le backend génère chaque
+// occurrence en heure de Paris (changements d'heure compris).
+export interface CreateCoachTrainingSeriesPayload extends Omit<CoachTrainingContentPayload, 'startAt' | 'endAt'> {
+  title: string;
+  startDate: string; // YYYY-MM-DD
+  startTime: string; // HH:mm
+  endTime?: string; // HH:mm
+  weekdays: number[]; // 1 = lundi ... 7 = dimanche
+  durationMonths: number; // 1 | 3 | 6 | 12
+  groupIds?: string[];
+  athleteIds?: string[];
+}
+
+export async function createCoachTrainingSeries(
+  payload: CreateCoachTrainingSeriesPayload,
+): Promise<CoachTrainingSeriesCreated> {
+  return apiRequest('/coach/trainings/series', jsonInit('POST', payload));
+}
+
+// "Annuler la suite" : annulation douce des occurrences encore à venir de
+// la série (jamais les séances passées ni leurs présences).
+export async function cancelCoachTrainingSeriesUpcoming(seriesId: string): Promise<{ cancelledCount: number }> {
+  return apiRequest(`/coach/trainings/series/${seriesId}/upcoming`, { method: 'DELETE' });
 }
 
 export async function updateCoachTraining(

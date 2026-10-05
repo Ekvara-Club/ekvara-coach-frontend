@@ -13,6 +13,8 @@ interface TrainingDetailModalProps {
   onEditAssignments: () => void;
   onCancelTraining: () => void;
   onManageAttendance: () => void;
+  // Présent seulement pour une séance récurrente (training.seriesId).
+  onCancelSeries?: () => void;
 }
 
 const CANCELLED_STATUS = 'annule';
@@ -30,7 +32,15 @@ const CANCELLED_STATUS = 'annule';
 // l'app athlète pour un simple compteur d'affichage. Seulement pour une
 // séance NI future NI annulée (§8/§9 : pas de saisie possible dans ces cas,
 // donc pas de compteur pertinent à afficher).
-function TrainingDetailModal({ training, onClose, onEditContent, onEditAssignments, onCancelTraining, onManageAttendance }: TrainingDetailModalProps) {
+function TrainingDetailModal({
+  training,
+  onClose,
+  onEditContent,
+  onEditAssignments,
+  onCancelTraining,
+  onManageAttendance,
+  onCancelSeries,
+}: TrainingDetailModalProps) {
   const isCancelled = training.status === CANCELLED_STATUS;
   const isFuture = new Date(training.startAt).getTime() > Date.now();
   const { athletes, groups, athleteCount } = training.assignments;
@@ -58,6 +68,9 @@ function TrainingDetailModal({ training, onClose, onEditContent, onEditAssignmen
       <div className="max-h-[75vh] space-y-4 overflow-y-auto p-5">
         {isCancelled && (
           <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ekvara-black/60">Séance annulée</p>
+        )}
+        {training.seriesId && (
+          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ekvara-black/60">Séance récurrente</p>
         )}
 
         <div>
@@ -126,8 +139,13 @@ function TrainingDetailModal({ training, onClose, onEditContent, onEditAssignmen
               Modifier les destinataires
             </Button>
             <Button type="button" variant="ghost" className="text-red-600" onClick={onCancelTraining}>
-              Annuler la séance
+              {training.seriesId ? 'Annuler cette séance uniquement' : 'Annuler la séance'}
             </Button>
+            {training.seriesId && onCancelSeries && (
+              <Button type="button" variant="ghost" className="text-red-600" onClick={onCancelSeries}>
+                Annuler toutes les séances à venir de la série
+              </Button>
+            )}
           </div>
         )}
       </div>

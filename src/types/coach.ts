@@ -398,6 +398,9 @@ export interface CoachTrainingSummary {
   level: string | null;
   description: string | null;
   status: string | null;
+  // Séance récurrente : identifiant commun à toutes les occurrences d'une
+  // même série (POST /coach/trainings/series), null pour une séance isolée.
+  seriesId: string | null;
   athleteCount: number;
 }
 
@@ -426,6 +429,7 @@ export interface CoachTrainingDetail {
   level: string | null;
   description: string | null;
   status: string | null;
+  seriesId: string | null;
   assignments: {
     athleteCount: number;
     athletes: CoachTrainingAthleteRef[];
@@ -653,4 +657,14 @@ export interface CompetitionCatalogItem {
   pays: string | null;
   niveau: string | null;
   saison: string | null;
+}
+
+// POST /coach/trainings/series (voir CoachTrainingsService.createSeries) :
+// une séance collective ordinaire par occurrence, reliées par seriesId.
+export interface CoachTrainingSeriesCreated {
+  seriesId: string;
+  occurrenceCount: number;
+  firstStartAt: string;
+  lastStartAt: string;
+  athleteCount: number;
 }

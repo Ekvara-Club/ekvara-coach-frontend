@@ -41,6 +41,9 @@ function TrainingRow({ training, onOpenDetail, onRequestCancel }: TrainingRowPro
         <p className="mt-0.5 text-xs text-ekvara-black/50">
           {training.athleteCount} {training.athleteCount > 1 ? 'athlètes' : 'athlète'}
         </p>
+        {training.seriesId && !isCancelled && (
+          <p className="mt-0.5 text-xs text-ekvara-black/50">Récurrente</p>
+        )}
         {isCancelled && (
           <p className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-ekvara-black/60">Annulée</p>
         )}

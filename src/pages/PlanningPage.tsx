@@ -23,6 +23,7 @@ import TrainingFormModal from '../components/planning/TrainingFormModal';
 import TrainingDetailModal from '../components/planning/TrainingDetailModal';
 import AssignmentsModal from '../components/planning/AssignmentsModal';
 import CancelTrainingModal from '../components/planning/CancelTrainingModal';
+import CancelSeriesModal from '../components/planning/CancelSeriesModal';
 import AttendanceModal from '../components/planning/AttendanceModal';
 
 type DetailView = 'view' | 'edit-content' | 'edit-assignments' | 'attendance';
@@ -61,6 +62,7 @@ function PlanningPage() {
   const [attendanceRefreshKey, setAttendanceRefreshKey] = useState(0);
 
   const [cancelTarget, setCancelTarget] = useState<{ id: string; title: string } | null>(null);
+  const [seriesCancelTarget, setSeriesCancelTarget] = useState<{ seriesId: string; title: string } | null>(null);
 
   const loadTrainings = useCallback(() => {
     setTrainingsLoading(true);
@@ -131,6 +133,7 @@ function PlanningPage() {
   function afterMutation() {
     closeDetail();
     setCancelTarget(null);
+    setSeriesCancelTarget(null);
     loadTrainings();
   }
 
@@ -218,6 +221,15 @@ function PlanningPage() {
             closeDetail();
             setCancelTarget(target);
           }}
+          onCancelSeries={
+            detailData.seriesId
+              ? () => {
+                  const target = { seriesId: detailData.seriesId!, title: detailData.title };
+                  closeDetail();
+                  setSeriesCancelTarget(target);
+                }
+              : undefined
+          }
         />
       )}
 
@@ -260,6 +272,15 @@ function PlanningPage() {
           trainingId={cancelTarget.id}
           trainingTitle={cancelTarget.title}
           onClose={() => setCancelTarget(null)}
+          onCancelled={afterMutation}
+        />
+      )}
+
+      {seriesCancelTarget && (
+        <CancelSeriesModal
+          seriesId={seriesCancelTarget.seriesId}
+          trainingTitle={seriesCancelTarget.title}
+          onClose={() => setSeriesCancelTarget(null)}
           onCancelled={afterMutation}
         />
       )}
