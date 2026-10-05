@@ -10,7 +10,7 @@ function StatRow({ label, value }: StatRowProps) {
   return (
     <div className="flex items-center justify-between py-2.5">
       <span className="text-sm text-ekvara-black/70">{label}</span>
-      <span className="font-display text-sm font-bold text-ekvara-black">{value}</span>
+      <span className={`font-display text-sm font-bold tabular-nums ${value === 0 ? 'text-ekvara-black/40' : 'text-ekvara-black'}`}>{value}</span>
     </div>
   );
 }

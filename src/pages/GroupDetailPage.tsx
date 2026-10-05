@@ -222,7 +222,7 @@ function GroupDetailPage({ groupId }: GroupDetailPageProps) {
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Rechercher un athlète..."
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-ekvara-black focus:outline-none"
+                  className="w-full rounded-md border border-ekvara-black/15 bg-ekvara-surface px-3 py-2.5 text-sm focus:border-ekvara-black focus:outline-none focus:ring-1 focus:ring-ekvara-black"
                 />
               </label>
             )}

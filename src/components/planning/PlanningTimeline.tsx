@@ -44,6 +44,9 @@ function PlanningTimeline({ days, trainings, onOpenDetail, onRequestCancel }: Pl
 
         <div className="mt-3 border-t border-gray-200" aria-hidden="true" />
 
+        {/* Desktop : une semaine vide n'affichait que 7 colonnes muettes. */}
+        {trainings.length === 0 && <p className="py-6 text-sm text-ekvara-black/60">Aucune séance cette semaine.</p>}
+
         <div className="mt-4 grid grid-cols-7 gap-4">
           {days.map((day) => (
             <div key={day.toISOString()} className="flex flex-col gap-3">

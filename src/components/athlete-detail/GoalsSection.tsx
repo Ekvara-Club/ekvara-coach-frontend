@@ -185,7 +185,7 @@ function GoalsSection({ athleteId, goals, onChanged }: GoalsSectionProps) {
           )}
 
           <div className="mt-8">
-            <SectionLabel>Roadmap</SectionLabel>
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-ekvara-black/55">Roadmap</h3>
             <div className="mt-4">
               <GoalRoadmap
                 athleteId={athleteId}

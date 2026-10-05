@@ -29,7 +29,7 @@ function WeekControl({ monday, sunday, onPrevious, onNext, onToday }: WeekContro
           type="button"
           onClick={onPrevious}
           aria-label="Semaine précédente"
-          className="px-1 text-ekvara-muted transition-colors hover:text-ekvara-black"
+          className="-mx-2 flex h-11 w-11 items-center justify-center text-ekvara-black/55 transition-colors hover:text-ekvara-black"
         >
           &larr;
         </button>
@@ -40,7 +40,7 @@ function WeekControl({ monday, sunday, onPrevious, onNext, onToday }: WeekContro
           type="button"
           onClick={onNext}
           aria-label="Semaine suivante"
-          className="px-1 text-ekvara-muted transition-colors hover:text-ekvara-black"
+          className="-mx-2 flex h-11 w-11 items-center justify-center text-ekvara-black/55 transition-colors hover:text-ekvara-black"
         >
           &rarr;
         </button>

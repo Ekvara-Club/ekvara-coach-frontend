@@ -65,7 +65,7 @@ function GroupAthleteRow({ athlete, index, onRemove, removing }: GroupAthleteRow
         type="button"
         onClick={() => onRemove(athlete.id)}
         disabled={removing}
-        className="flex-shrink-0 text-xs text-ekvara-black/40 underline decoration-ekvara-black/20 underline-offset-2 hover:text-ekvara-black disabled:opacity-50"
+        className="ml-4 flex-shrink-0 px-2 py-2 text-xs text-ekvara-black/55 underline decoration-ekvara-black/20 underline-offset-2 hover:text-ekvara-black disabled:opacity-50"
       >
         {removing ? 'Retrait...' : 'Retirer'}
       </button>

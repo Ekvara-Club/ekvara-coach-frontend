@@ -49,7 +49,7 @@ function AttendanceSection({ athleteId }: AttendanceSectionProps) {
 
       {!loading && !error && last30Days && (
         <div className="mt-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ekvara-black/50">30 derniers jours</p>
+          <p className="text-sm text-ekvara-black/60">30 derniers jours</p>
 
           {last30Days.recordedSessions === 0 ? (
             <p className="mt-2 text-sm text-ekvara-black/60">Aucune présence enregistrée pour le moment.</p>

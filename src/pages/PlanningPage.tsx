@@ -165,7 +165,7 @@ function PlanningPage() {
         <SectionLabel>{isCurrentWeek(monday) ? 'Cette semaine' : 'Semaine sélectionnée'}</SectionLabel>
       </div>
 
-      <div className="mt-4 border-t border-gray-100 pt-6">
+      <div className="mt-4">
         {trainingsError && <ErrorState message={trainingsError} />}
         {!trainingsError && trainingsLoading && <LoadingState />}
         {!trainingsError && !trainingsLoading && trainings && (
