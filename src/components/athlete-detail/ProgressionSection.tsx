@@ -2,7 +2,9 @@ import { useState } from 'react';
 import type { CoachAthleteDetailDashboard, MetricOverviewEntry } from '../../types/coach';
 import { METRIC_STATUS_LABELS, formatMetricPercentage } from '../../utils/metrics';
 import SectionLabel from '../ui/SectionLabel';
+import SkillsRadar from './SkillsRadar';
 import MetricDetailModal from './MetricDetailModal';
+import MetricScalesModal from './MetricScalesModal';
 
 interface ProgressionSectionProps {
   athleteId: string;
@@ -59,6 +61,7 @@ function MetricRow({ metric, onSelect }: { metric: MetricOverviewEntry; onSelect
 
 function ProgressionSection({ athleteId, progression, metrics, onMeasurementAdded }: ProgressionSectionProps) {
   const [selectedMetric, setSelectedMetric] = useState<MetricOverviewEntry | null>(null);
+  const [scalesOpen, setScalesOpen] = useState(false);
 
   return (
     <section aria-labelledby="progression-heading">
@@ -70,6 +73,33 @@ function ProgressionSection({ athleteId, progression, metrics, onMeasurementAdde
           {progression.decliningCount > 0 &&
             ` · ${progression.decliningCount} en baisse`}
         </p>
+      )}
+
+      {metrics.length > 0 && (
+        <div className="mt-4">
+          <SkillsRadar metrics={metrics} />
+          <div className="mt-2 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setScalesOpen(true)}
+              className="text-sm font-medium text-ekvara-black underline-offset-2 hover:underline"
+            >
+              Barème
+            </button>
+          </div>
+        </div>
+      )}
+
+      {scalesOpen && (
+        <MetricScalesModal
+          onClose={() => setScalesOpen(false)}
+          onSaved={() => {
+            setScalesOpen(false);
+            // Les notes de l'étoile dépendent du barème : même rechargement
+            // que l'ajout d'une mesure.
+            onMeasurementAdded();
+          }}
+        />
       )}
 
       {metrics.length === 0 ? (

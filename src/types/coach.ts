@@ -365,6 +365,10 @@ export interface MetricOverviewEntry {
   percentage: number | null;
   status: MetricStatus;
   measuredAt: string | null;
+  // Étoile de compétences : note /100 selon le barème de la capacité (null
+  // si non évaluée ou sans barème) — calculée par le backend uniquement.
+  score: number | null;
+  previousScore: number | null;
 }
 
 export interface MetricsOverviewResponse {
@@ -697,4 +701,22 @@ export interface CoachTrainingSeriesCreated {
   firstStartAt: string;
   lastStartAt: string;
   athleteCount: number;
+}
+
+// GET/PUT /coach/metric-scales : barème de l'étoile de compétences du CLUB
+// du coach (null = barème par défaut de la capacité).
+export interface MetricScaleValues {
+  scoreZero: number;
+  scoreHundred: number;
+}
+
+export interface ClubMetricScale {
+  metricTypeId: string;
+  code: string;
+  name: string;
+  unit: string | null;
+  direction: string | null;
+  default: MetricScaleValues | null;
+  club: MetricScaleValues | null;
+  effective: MetricScaleValues | null;
 }

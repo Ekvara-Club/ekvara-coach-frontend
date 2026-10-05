@@ -19,6 +19,7 @@ import type {
   CoachTrainingAttendanceSheet,
   CoachTrainingDetail,
   CoachTrainingSeriesCreated,
+  ClubMetricScale,
   WtAthleteRecord,
   CoachTrainingSummary,
   CreateCoachExerciseInput,
@@ -161,6 +162,17 @@ export async function decideAthleteWtProfile(athleteId: string, decision: 'confi
 
 export async function getWtAthleteRecord(externalAthleteId: string): Promise<WtAthleteRecord> {
   return apiRequest(`/international-athletes/${externalAthleteId}`);
+}
+
+export async function getClubMetricScales(): Promise<{ scales: ClubMetricScale[] }> {
+  return apiRequest('/coach/metric-scales');
+}
+
+// scoreZero/scoreHundred à null ensemble = revenir au barème par défaut.
+export async function saveClubMetricScales(
+  scales: { metricTypeId: string; scoreZero: number | null; scoreHundred: number | null }[],
+): Promise<{ scales: ClubMetricScale[] }> {
+  return apiRequest('/coach/metric-scales', jsonInit('PUT', { scales }));
 }
 
 export async function getCoachAthleteDashboard(athleteId: string): Promise<CoachAthleteDetailDashboard> {
