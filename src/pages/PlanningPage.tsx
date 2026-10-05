@@ -25,6 +25,7 @@ import AssignmentsModal from '../components/planning/AssignmentsModal';
 import CancelTrainingModal from '../components/planning/CancelTrainingModal';
 import CancelSeriesModal from '../components/planning/CancelSeriesModal';
 import AttendanceModal from '../components/planning/AttendanceModal';
+import Modal from '../components/ui/Modal';
 
 type DetailView = 'view' | 'edit-content' | 'edit-assignments' | 'attendance';
 
@@ -201,11 +202,11 @@ function PlanningPage() {
       )}
 
       {detailTrainingId && !detailLoading && detailError && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ekvara-black/60 px-4" onClick={closeDetail}>
-          <div className="rounded-md bg-ekvara-surface px-4 py-3" onClick={(event) => event.stopPropagation()}>
+        <Modal title="Séance" onClose={closeDetail}>
+          <div className="p-5">
             <ErrorState message={detailError} />
           </div>
-        </div>
+        </Modal>
       )}
 
       {detailData && detailView === 'view' && (

@@ -134,27 +134,27 @@ function GoalsSection({ athleteId, goals, onChanged }: GoalsSectionProps) {
 
       {primary ? (
         <div className="mt-4">
-          {(primary.type || primaryDaysLabel) && (
-            <div className="flex items-center justify-between gap-3">
-              {primary.type && (
-                <p className="text-xs font-semibold uppercase tracking-wide text-ekvara-muted">
-                  {formatGoalType(primary.type)}
-                </p>
-              )}
-              {primaryDaysLabel && (
-                <span className="flex-shrink-0 whitespace-nowrap rounded-full bg-ekvara-black px-2.5 py-1 text-xs font-semibold text-ekvara-surface">
-                  {primaryDaysLabel}
-                </span>
-              )}
-            </div>
+          {primary.type && (
+            <p className="text-xs font-semibold uppercase tracking-wide text-ekvara-black/55">
+              {formatGoalType(primary.type)}
+            </p>
           )}
 
           <div className="mt-1 flex items-start justify-between gap-4">
             <h3 className="text-balance font-display text-xl font-extrabold tracking-tight text-ekvara-black sm:text-2xl">
               {primary.titre}
             </h3>
-            {primaryMenuItems.length > 0 && (
-              <DropdownMenu triggerLabel={`Actions pour l'objectif ${primary.titre}`} items={primaryMenuItems} />
+            {(primaryDaysLabel || primaryMenuItems.length > 0) && (
+              <div className="flex flex-shrink-0 items-center gap-1">
+                {primaryDaysLabel && (
+                  <span className="whitespace-nowrap rounded-full bg-ekvara-black px-2.5 py-1 text-xs font-semibold text-ekvara-surface">
+                    {primaryDaysLabel}
+                  </span>
+                )}
+                {primaryMenuItems.length > 0 && (
+                  <DropdownMenu triggerLabel={`Actions pour l'objectif ${primary.titre}`} items={primaryMenuItems} />
+                )}
+              </div>
             )}
           </div>
 
