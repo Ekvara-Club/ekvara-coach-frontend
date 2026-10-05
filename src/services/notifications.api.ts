@@ -56,5 +56,9 @@ export function deepLinkFor(notification: NotificationItem): string {
   if (notification.resourceType === 'ATHLETE' && notification.resourceId) {
     return `/athletes/${notification.resourceId}`;
   }
+  // Synchro des sources : compétition modifiée -> sa fiche.
+  if (notification.resourceType === 'COMPETITION' && notification.resourceId) {
+    return `/competitions/${notification.resourceId}`;
+  }
   return '/';
 }

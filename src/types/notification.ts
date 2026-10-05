@@ -9,7 +9,8 @@ export type NotificationType =
   | 'GOAL_UPDATED'
   | 'WEIGHT_TARGET_UPDATED'
   | 'ATHLETE_CONDITION_UPDATED'
-  | 'WT_PROFILE_LINK_REQUESTED';
+  | 'WT_PROFILE_LINK_REQUESTED'
+  | 'COMPETITION_UPDATED';
 
 export type NotificationResourceType = 'TRAINING' | 'EXERCISE' | 'GOAL' | 'WEIGHT_TARGET' | 'COMPETITION' | 'ATHLETE';
 

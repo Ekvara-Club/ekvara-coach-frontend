@@ -29,5 +29,6 @@ describe('état de forme athlète — côté coach', () => {
     };
     expect(deepLinkFor(base)).toBe('/athletes/a-kais');
     expect(deepLinkFor({ ...base, type: 'TRAINING_ASSIGNED', resourceType: 'TRAINING', resourceId: 't-1' })).toBe('/');
+    expect(deepLinkFor({ ...base, type: 'COMPETITION_UPDATED', resourceType: 'COMPETITION', resourceId: 'c-1' })).toBe('/competitions/c-1');
   });
 });
