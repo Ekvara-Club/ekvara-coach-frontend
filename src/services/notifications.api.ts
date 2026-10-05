@@ -49,10 +49,12 @@ export async function markAllNotificationsRead(): Promise<{ updated: number }> {
   return data;
 }
 
-// Deep link (ticket "DEEP LINKS") : aucun type COACH n'existe encore en V1,
-// donc aucune correspondance resourceType->route coach n'est établie —
-// navigue vers le dashboard, seule page toujours pertinente. À étoffer
-// lorsqu'un premier type COACH sera réellement produit.
-export function deepLinkFor(_notification: NotificationItem): string {
+// Deep link (ticket "DEEP LINKS") : premier type COACH réellement produit =
+// changement d'état de forme d'un athlète (resourceType ATHLETE) -> sa
+// fiche. Tout le reste -> dashboard, seule page toujours pertinente.
+export function deepLinkFor(notification: NotificationItem): string {
+  if (notification.resourceType === 'ATHLETE' && notification.resourceId) {
+    return `/athletes/${notification.resourceId}`;
+  }
   return '/';
 }

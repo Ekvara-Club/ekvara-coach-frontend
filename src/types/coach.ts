@@ -72,6 +72,15 @@ export interface PrimaryGoalView {
   totalSteps: number;
 }
 
+// État de forme déclaré par l'athlète (PUT /athletes/:id/condition côté
+// app athlète) — voir CoachDashboardService.AthleteConditionView.
+export interface CoachAthleteCondition {
+  status: string; // 'actif' | 'malade' | 'blesse' | 'absent'
+  note: string | null;
+  expectedReturn: string | null; // YYYY-MM-DD
+  updatedAt: string | null;
+}
+
 export interface CoachAthleteDashboardSummary {
   id: string;
   firstName: string | null;
@@ -79,6 +88,7 @@ export interface CoachAthleteDashboardSummary {
   ageCategory: string | null;
   grade: string | null;
   sportLevel: string | null;
+  condition: CoachAthleteCondition;
   groups: AthleteGroupRef[];
   weight: WeightSummaryView;
   progression: ProgressionView;
@@ -102,6 +112,9 @@ export type CoachAttentionReasonType =
   | 'NO_WEIGHT_TARGET'
   | 'METRIC_DECLINING'
   | 'NO_METRIC_DATA'
+  | 'CONDITION_INJURED'
+  | 'CONDITION_SICK'
+  | 'CONDITION_ABSENT'
   | 'ATTENDANCE_LOW'
   | 'GOAL_OVERDUE'
   | 'PREPARATION_FORFAIT';

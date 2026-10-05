@@ -2,6 +2,7 @@ import type { CoachAthleteDashboardSummary } from '../../types/coach';
 import { athleteName, formatWeight, formatWeightDifference } from '../../utils/format';
 import { formatDaysUntil } from '../../utils/date';
 import SectionLabel from '../ui/SectionLabel';
+import { conditionLabel, isUnavailable } from '../../utils/condition';
 
 function WeightCell({ weight }: { weight: CoachAthleteDashboardSummary['weight'] }) {
   if (weight.currentWeight === null) {
@@ -62,7 +63,14 @@ function AthleteIdentity({ athlete }: { athlete: CoachAthleteDashboardSummary })
   const meta = [athlete.ageCategory, athlete.grade].filter(Boolean).join(' · ');
   return (
     <div>
-      <p className="font-semibold text-ekvara-black">{athleteName(athlete)}</p>
+      <p className="flex flex-wrap items-center gap-2 font-semibold text-ekvara-black">
+        {athleteName(athlete)}
+        {isUnavailable(athlete.condition) && (
+          <span className="rounded-full bg-ekvara-black px-2 py-0.5 text-[11px] font-semibold text-ekvara-surface">
+            {conditionLabel(athlete.condition.status)}
+          </span>
+        )}
+      </p>
       {meta && <p className="text-xs text-ekvara-black/50">{meta}</p>}
     </div>
   );

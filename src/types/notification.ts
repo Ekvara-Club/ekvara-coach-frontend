@@ -7,9 +7,10 @@ export type NotificationType =
   | 'TRAINING_CANCELLED'
   | 'EXERCISE_ASSIGNED'
   | 'GOAL_UPDATED'
-  | 'WEIGHT_TARGET_UPDATED';
+  | 'WEIGHT_TARGET_UPDATED'
+  | 'ATHLETE_CONDITION_UPDATED';
 
-export type NotificationResourceType = 'TRAINING' | 'EXERCISE' | 'GOAL' | 'WEIGHT_TARGET' | 'COMPETITION';
+export type NotificationResourceType = 'TRAINING' | 'EXERCISE' | 'GOAL' | 'WEIGHT_TARGET' | 'COMPETITION' | 'ATHLETE';
 
 export interface NotificationItem {
   id: string;

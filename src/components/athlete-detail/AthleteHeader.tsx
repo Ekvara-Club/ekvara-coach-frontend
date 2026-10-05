@@ -1,5 +1,6 @@
 import type { CoachAthleteDetailDashboard } from '../../types/coach';
 import { athleteName } from '../../utils/format';
+import { conditionDetails, conditionLabel, isUnavailable } from '../../utils/condition';
 
 // Ticket #3 §4 : nom + ageCategory/grade/sportLevel + groupes. Jamais
 // d'email (déjà absent de cet agrégat dashboard), jamais de photo ou de
@@ -16,6 +17,14 @@ function AthleteHeader({ athlete }: { athlete: CoachAthleteDetailDashboard }) {
         {athleteName(athlete)}
       </h1>
       {meta && <p className="mt-1 text-sm text-ekvara-black/60">{meta}</p>}
+      {isUnavailable(athlete.condition) && (
+        <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-ekvara-black/70">
+          <span className="rounded-full bg-ekvara-black px-2.5 py-0.5 text-xs font-semibold text-ekvara-surface">
+            {conditionLabel(athlete.condition.status)}
+          </span>
+          {conditionDetails(athlete.condition)}
+        </p>
+      )}
       {athlete.groups.length > 0 && (
         <p className="mt-2 text-xs font-semibold uppercase tracking-[0.15em] text-ekvara-black/70">
           {athlete.groups.map((group) => group.name).join(' · ')}
