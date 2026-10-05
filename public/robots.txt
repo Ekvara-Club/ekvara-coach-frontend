@@ -1,0 +1,3 @@
+# Application privée (comptes sur invitation) : aucune page à indexer.
+User-agent: *
+Disallow: /
