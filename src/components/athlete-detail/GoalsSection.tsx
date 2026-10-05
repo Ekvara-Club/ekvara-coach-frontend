@@ -150,7 +150,7 @@ function GoalsSection({ athleteId, goals, onChanged }: GoalsSectionProps) {
           )}
 
           <div className="mt-1 flex items-start justify-between gap-4">
-            <h3 className="font-display text-2xl font-extrabold tracking-tight text-ekvara-black sm:text-3xl">
+            <h3 className="text-balance font-display text-xl font-extrabold tracking-tight text-ekvara-black sm:text-2xl">
               {primary.titre}
             </h3>
             {primaryMenuItems.length > 0 && (

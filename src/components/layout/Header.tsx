@@ -53,10 +53,10 @@ function Header() {
 
   return (
     <header className="border-b border-gray-200 bg-ekvara-surface">
-      {/* max-w-4xl : même grille que le contenu de toutes les pages (ticket
+      {/* max-w-5xl : même grille que le contenu de toutes les pages (ticket
           #6 §3) — auparavant max-w-6xl, désaligné visuellement des bords du
           contenu principal. */}
-      <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-4 py-4 sm:px-6">
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-4 py-4 sm:px-6">
         {/* Même wordmark EKVARA que l'app athlète, jamais un second logo
             (ticket §4) : "COACH" en discret sous le nom de marque. */}
         <a
@@ -72,19 +72,20 @@ function Header() {
           </span>
         </a>
 
-        {/* flex-wrap + gap réduit (ticket #5) : 5 items ("Exercices" ajouté)
-            ne tiennent plus systématiquement sur une seule ligne à 390px —
-            wrap sur 2 lignes plutôt qu'un débordement horizontal. */}
-        <nav className="order-3 flex w-full flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:order-2 sm:w-auto sm:flex-nowrap sm:gap-x-6">
+        {/* Mobile : une seule ligne qui défile horizontalement (6 entrées ne
+            tiennent pas à 390px) plutôt qu'un retour à la ligne qui isolait
+            « Compétitions » ; desktop inchangé. */}
+        <nav className="order-3 -mx-4 flex w-[calc(100%+2rem)] flex-nowrap items-center gap-x-5 overflow-x-auto px-4 [scrollbar-width:none] sm:order-2 sm:mx-0 sm:w-auto sm:overflow-visible sm:px-0 sm:gap-x-6">
           {NAV_ITEMS.map((item) => {
-            const isActive = pathname === item.href;
+            // Actif aussi sur les pages de détail (/athletes/:id, /groups/:id…).
+            const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
             return (
               <a
                 key={item.label}
                 href={item.href}
                 onClick={(event) => handleNavClick(event, item.href)}
                 aria-current={isActive ? 'page' : undefined}
-                className={`border-b pb-0.5 text-sm transition-colors ${
+                className={`whitespace-nowrap border-b py-2.5 text-sm transition-colors sm:py-0 sm:pb-0.5 ${
                   isActive
                     ? 'border-ekvara-black font-semibold text-ekvara-black'
                     : 'border-transparent font-medium text-ekvara-black/60 hover:text-ekvara-black'
@@ -106,7 +107,7 @@ function Header() {
               aria-label="Profil coach"
               aria-haspopup="true"
               aria-expanded={isMenuOpen}
-              className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-ekvara-black text-sm font-semibold text-ekvara-surface transition-shadow ${
+              className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-ekvara-black sm:h-9 sm:w-9 text-sm font-semibold text-ekvara-surface transition-shadow ${
                 isMenuOpen ? 'ring-2 ring-ekvara-black/20 ring-offset-2 ring-offset-ekvara-surface' : ''
               }`}
             >

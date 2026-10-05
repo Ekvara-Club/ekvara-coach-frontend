@@ -36,9 +36,10 @@ function DropdownMenu({ triggerLabel, items }: DropdownMenuProps) {
         aria-label={triggerLabel}
         aria-haspopup="true"
         aria-expanded={open}
-        className="rounded px-2 py-1 text-lg leading-none text-ekvara-black/40 transition-colors hover:text-ekvara-black"
+        className="flex h-10 w-10 items-center justify-center rounded-md text-lg leading-none text-ekvara-black/50 transition-colors hover:bg-gray-100 hover:text-ekvara-black"
       >
-        &#8230;
+        {/* « ⋮ » vertical : jamais confondu avec un texte tronqué (« 20h30… »). */}
+        &#8942;
       </button>
 
       {open && (

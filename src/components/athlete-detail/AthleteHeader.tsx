@@ -13,7 +13,7 @@ function AthleteHeader({ athlete }: { athlete: CoachAthleteDetailDashboard }) {
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-extrabold tracking-tight text-ekvara-black sm:text-3xl">
+      <h1 className="font-display text-3xl font-extrabold tracking-tight text-ekvara-black sm:text-4xl">
         {athleteName(athlete)}
       </h1>
       {meta && <p className="mt-1 text-sm text-ekvara-black/60">{meta}</p>}

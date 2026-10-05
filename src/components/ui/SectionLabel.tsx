@@ -5,7 +5,7 @@ import type { HTMLAttributes } from 'react';
 // PRÉPARATION / POIDS / PROGRESSION / OBJECTIF PRINCIPAL sur une seule page.
 function SectionLabel({ className = '', children, ...props }: HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h2 className={`text-xs font-semibold uppercase tracking-[0.15em] text-ekvara-muted ${className}`} {...props}>
+    <h2 className={`text-xs font-semibold uppercase tracking-[0.15em] text-ekvara-black/55 ${className}`} {...props}>
       {children}
     </h2>
   );

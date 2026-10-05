@@ -38,11 +38,11 @@ function PreparationSection({ athlete }: { athlete: CoachAthleteDetailDashboard 
         <SectionLabel id="preparation-heading">Prochaine compétition</SectionLabel>
         {nextCompetition ? (
           <div className="mt-3">
-            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <div className="flex items-baseline justify-between gap-x-4">
               <a
                 href={`/competitions/${nextCompetition.id}`}
                 onClick={(event) => handleNavClick(event, `/competitions/${nextCompetition.id}`)}
-                className="font-display text-base font-bold text-ekvara-black hover:underline"
+                className="min-w-0 text-balance font-display text-base font-bold text-ekvara-black hover:underline"
               >
                 {nextCompetition.name}
               </a>

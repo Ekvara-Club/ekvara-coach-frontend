@@ -1,6 +1,7 @@
 import type { CoachAthleteNeedingAttention } from '../../types/coach';
 import { athleteName } from '../../utils/format';
 import { attentionReasonLabel } from '../../utils/attentionReasons';
+import { handleNavClick } from '../../utils/navigation';
 import SectionLabel from '../ui/SectionLabel';
 
 interface AttentionListProps {
@@ -33,7 +34,13 @@ function AttentionList({ items, maxVisible, onShowAll, emptyMessage = 'Rien à s
       <ul className="mt-2 divide-y divide-gray-100">
         {visibleItems.map((item) => (
           <li key={item.athlete.id} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 py-3">
-            <span className="text-sm font-semibold text-ekvara-black">{athleteName(item.athlete)}</span>
+            <a
+              href={`/athletes/${item.athlete.id}`}
+              onClick={(event) => handleNavClick(event, `/athletes/${item.athlete.id}`)}
+              className="text-sm font-semibold text-ekvara-black underline-offset-2 hover:underline"
+            >
+              {athleteName(item.athlete)}
+            </a>
             <span className="flex flex-wrap gap-1.5">
               {item.reasons.map((reason, index) => (
                 // Pas de rouge massif (ticket §19) : neutre, réservé au futur

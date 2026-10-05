@@ -9,16 +9,16 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const BASE_CLASSES =
-  'inline-flex items-center justify-center gap-1.5 font-sans text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50';
+  'inline-flex items-center justify-center gap-1.5 font-sans text-sm font-medium transition-[color,background-color,border-color,opacity,transform] duration-150 disabled:cursor-not-allowed disabled:opacity-50';
 
-const SURFACE_CLASSES = 'rounded-md px-4 py-2.5';
+const SURFACE_CLASSES = 'rounded-md px-4 py-2.5 active:scale-[0.98]';
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary: `${SURFACE_CLASSES} bg-ekvara-black text-ekvara-surface hover:bg-black`,
   secondary: `${SURFACE_CLASSES} border border-ekvara-black/15 bg-ekvara-surface text-ekvara-black hover:border-ekvara-black/30`,
   accent: `${SURFACE_CLASSES} bg-ekvara-lime text-ekvara-black hover:bg-[#cdf22e]`,
-  ghost: 'text-ekvara-black hover:opacity-70',
-  'ghost-light': 'text-ekvara-surface hover:opacity-70',
+  ghost: '-my-2.5 py-2.5 text-ekvara-black hover:opacity-70',
+  'ghost-light': '-my-2.5 py-2.5 text-ekvara-surface hover:opacity-70',
   // Réservé aux confirmations destructives finales (retrait du roster,
   // suppression de groupe, annulation de séance, suppression d'exercice) —
   // jamais pour une action courante (ticket #2 §29).

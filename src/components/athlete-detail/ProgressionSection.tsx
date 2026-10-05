@@ -26,26 +26,26 @@ function MetricRow({ metric, onSelect }: { metric: MetricOverviewEntry; onSelect
       <button
         type="button"
         onClick={onSelect}
-        className="grid w-full grid-cols-[16px_1fr] items-center gap-x-3 gap-y-1 border-l-2 border-transparent py-3 pl-3 pr-1 text-left transition-colors hover:bg-gray-50 sm:grid-cols-[16px_1fr_auto_auto] sm:gap-x-6"
+        className="grid w-full grid-cols-[16px_1fr] items-center gap-x-3 gap-y-1 border-l-2 border-transparent py-3 pl-3 pr-1 text-left transition-colors hover:bg-gray-50 sm:grid-cols-[16px_1fr_6rem_11rem] sm:gap-x-6"
       >
         <span
           className={`h-2 w-2 flex-shrink-0 rounded-full ${
-            isImproved ? 'bg-ekvara-lime' : 'border border-ekvara-black/20'
+            isImproved ? 'bg-ekvara-lime' : status === 'regressed' ? 'bg-ekvara-black/40' : 'border border-ekvara-black/20'
           }`}
           aria-hidden="true"
         />
         <p className="text-sm font-semibold uppercase tracking-wide text-ekvara-black">{metric.name}</p>
 
         {currentValue === null ? (
-          <p className="col-start-2 text-sm text-ekvara-black/50 sm:col-start-3">Pas encore évaluée</p>
+          <p className="col-start-2 text-sm text-ekvara-black/50 sm:col-span-2 sm:col-start-3 sm:text-right">Pas encore évaluée</p>
         ) : (
           <>
-            <p className="col-start-2 font-display text-base font-bold text-ekvara-black sm:col-start-3 sm:text-right">
+            <p className="col-start-2 font-display text-base font-bold tabular-nums text-ekvara-black sm:col-start-3 sm:text-right">
               {currentValue}
               {unit && <span className="ml-1 font-sans text-xs font-normal text-ekvara-black/50">{unit}</span>}
             </p>
             {status === 'unknown' ? (
-              <p className="col-start-2 text-xs text-ekvara-black/50 sm:col-start-4">Pas assez de données</p>
+              <p className="col-start-2 text-xs text-ekvara-black/50 sm:col-start-4 sm:text-right">Pas assez de données</p>
             ) : (
               <p className="col-start-2 text-xs text-ekvara-black/70 sm:col-start-4 sm:text-right">
                 {percentage !== null && `${formatMetricPercentage(percentage)} · `}
@@ -65,7 +65,18 @@ function ProgressionSection({ athleteId, progression, metrics, onMeasurementAdde
 
   return (
     <section aria-labelledby="progression-heading">
-      <SectionLabel id="progression-heading">Progression</SectionLabel>
+      <div className="flex items-center justify-between gap-4">
+        <SectionLabel id="progression-heading">Progression</SectionLabel>
+        {metrics.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setScalesOpen(true)}
+            className="-my-2.5 py-2.5 text-sm font-medium text-ekvara-black underline-offset-2 hover:underline"
+          >
+            Barème de l'étoile
+          </button>
+        )}
+      </div>
 
       {progression.evaluatedCount > 0 && (
         <p className="mt-2 text-sm text-ekvara-black/70">
@@ -78,15 +89,6 @@ function ProgressionSection({ athleteId, progression, metrics, onMeasurementAdde
       {metrics.length > 0 && (
         <div className="mt-4">
           <SkillsRadar metrics={metrics} />
-          <div className="mt-2 flex justify-center">
-            <button
-              type="button"
-              onClick={() => setScalesOpen(true)}
-              className="text-sm font-medium text-ekvara-black underline-offset-2 hover:underline"
-            >
-              Barème
-            </button>
-          </div>
         </div>
       )}
 

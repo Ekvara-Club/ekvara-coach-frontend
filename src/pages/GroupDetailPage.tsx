@@ -101,7 +101,7 @@ function GroupDetailPage({ groupId }: GroupDetailPageProps) {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
         <LoadingState />
       </div>
     );
@@ -109,7 +109,7 @@ function GroupDetailPage({ groupId }: GroupDetailPageProps) {
 
   if (error || !dashboard) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
         <ErrorState message={error ?? 'Groupe introuvable.'} />
       </div>
     );
@@ -119,7 +119,7 @@ function GroupDetailPage({ groupId }: GroupDetailPageProps) {
   const attendanceRate = attendance.last30Days.attendanceRate;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <a
         href="/groups"
         onClick={(event) => handleNavClick(event, '/groups')}
@@ -131,7 +131,7 @@ function GroupDetailPage({ groupId }: GroupDetailPageProps) {
       {/* HERO — design éditorial (ticket §27), pas de cards SaaS ni de graphique. */}
       <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-extrabold uppercase tracking-tight text-ekvara-black sm:text-3xl">
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ekvara-black sm:text-3xl">
             {group.name}
           </h1>
           <p className="mt-1 text-sm text-ekvara-black/60">

@@ -2,6 +2,7 @@ import type { CoachUpcomingCompetition } from '../../types/coach';
 import { athleteName } from '../../utils/format';
 import { daysUntil, formatDate, formatDaysUntil } from '../../utils/date';
 import SectionLabel from '../ui/SectionLabel';
+import { handleNavClick } from '../../utils/navigation';
 
 function CompetitionRow({ item }: { item: CoachUpcomingCompetition }) {
   const location = [item.competition.city, item.competition.country].filter(Boolean).join(', ');
@@ -10,8 +11,14 @@ function CompetitionRow({ item }: { item: CoachUpcomingCompetition }) {
 
   return (
     <li className="py-4">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <p className="font-display text-base font-bold text-ekvara-black">{item.competition.name}</p>
+      <div className="flex items-baseline justify-between gap-x-4">
+        <a
+          href={`/competitions/${item.competition.id}`}
+          onClick={(event) => handleNavClick(event, `/competitions/${item.competition.id}`)}
+          className="min-w-0 text-balance font-display text-base font-bold text-ekvara-black underline-offset-2 hover:underline"
+        >
+          {item.competition.name}
+        </a>
         <span className="whitespace-nowrap text-sm font-semibold text-ekvara-black">
           {formatDaysUntil(daysUntil(item.competition.startDate))}
         </span>

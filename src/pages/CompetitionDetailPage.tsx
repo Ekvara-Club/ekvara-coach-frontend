@@ -169,7 +169,7 @@ function CompetitionDetailPage({ competitionId }: CompetitionDetailPageProps) {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
         <LoadingState />
       </div>
     );
@@ -177,7 +177,7 @@ function CompetitionDetailPage({ competitionId }: CompetitionDetailPageProps) {
 
   if (error || !detail) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
         <ErrorState message={error ?? 'Compétition introuvable.'} />
       </div>
     );
@@ -192,7 +192,7 @@ function CompetitionDetailPage({ competitionId }: CompetitionDetailPageProps) {
   const openAthlete = detail.athletes.find((a) => a.id === openAthleteId) ?? null;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <a
         href="/competitions"
         onClick={(event) => handleNavClick(event, '/competitions')}

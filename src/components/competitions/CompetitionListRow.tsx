@@ -41,7 +41,7 @@ function CompetitionListRow({ group, past = false }: CompetitionListRowProps) {
         </p>
 
         <div className="min-w-0 flex-1">
-          <p className="font-display text-base font-bold uppercase leading-snug tracking-tight text-ekvara-black">
+          <p className="text-balance font-display text-base font-bold leading-snug tracking-tight text-ekvara-black">
             {competition.name}
           </p>
           <p className="mt-1 text-sm text-ekvara-black/60">

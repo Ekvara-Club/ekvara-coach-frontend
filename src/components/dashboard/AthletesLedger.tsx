@@ -3,6 +3,7 @@ import { athleteName, formatWeight, formatWeightDifference } from '../../utils/f
 import { formatDaysUntil } from '../../utils/date';
 import SectionLabel from '../ui/SectionLabel';
 import { conditionLabel, isUnavailable } from '../../utils/condition';
+import { handleNavClick } from '../../utils/navigation';
 
 function WeightCell({ weight }: { weight: CoachAthleteDashboardSummary['weight'] }) {
   if (weight.currentWeight === null) {
@@ -64,9 +65,15 @@ function AthleteIdentity({ athlete }: { athlete: CoachAthleteDashboardSummary })
   return (
     <div>
       <p className="flex flex-wrap items-center gap-2 font-semibold text-ekvara-black">
-        {athleteName(athlete)}
+        <a
+          href={`/athletes/${athlete.id}`}
+          onClick={(event) => handleNavClick(event, `/athletes/${athlete.id}`)}
+          className="underline-offset-2 hover:underline"
+        >
+          {athleteName(athlete)}
+        </a>
         {isUnavailable(athlete.condition) && (
-          <span className="rounded-full bg-ekvara-black px-2 py-0.5 text-[11px] font-semibold text-ekvara-surface">
+          <span className="whitespace-nowrap rounded-full bg-ekvara-black px-2.5 py-0.5 text-xs font-semibold text-ekvara-surface">
             {conditionLabel(athlete.condition.status)}
           </span>
         )}
@@ -104,9 +111,9 @@ function AthletesLedger({ athletes }: { athletes: CoachAthleteDashboardSummary[]
         </thead>
         <tbody className="divide-y divide-gray-100">
           {athletes.map((athlete) => (
-            <tr key={athlete.id}>
+            <tr key={athlete.id} className="align-top">
               <td className="py-3 pr-4"><AthleteIdentity athlete={athlete} /></td>
-              <td className="py-3 pr-4 text-ekvara-black/70">
+              <td className="whitespace-nowrap py-3 pr-4 text-ekvara-black/70">
                 {athlete.groups.length > 0 ? athlete.groups.map((g) => g.name).join(', ') : '—'}
               </td>
               <td className="py-3 pr-4"><WeightCell weight={athlete.weight} /></td>
@@ -119,14 +126,20 @@ function AthletesLedger({ athletes }: { athletes: CoachAthleteDashboardSummary[]
 
       <ul className="mt-2 divide-y divide-gray-100 md:hidden">
         {athletes.map((athlete) => (
-          <li key={athlete.id} className="space-y-2 py-4">
+          <li key={athlete.id} className="space-y-2 py-4 text-sm">
             <AthleteIdentity athlete={athlete} />
             {athlete.groups.length > 0 && (
               <p className="text-xs text-ekvara-black/50">{athlete.groups.map((g) => g.name).join(', ')}</p>
             )}
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <WeightCell weight={athlete.weight} />
-              <ProgressionCell progression={athlete.progression} />
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-ekvara-black/55">Poids</p>
+                <WeightCell weight={athlete.weight} />
+              </div>
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-ekvara-black/55">Progression</p>
+                <ProgressionCell progression={athlete.progression} />
+              </div>
             </div>
             <CompetitionCell next={athlete.nextCompetition} />
           </li>

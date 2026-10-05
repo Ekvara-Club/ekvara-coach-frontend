@@ -91,7 +91,7 @@ function AthleteDetailPage({ athleteId }: AthleteDetailPageProps) {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <a
         href="/athletes"
         onClick={(event) => handleNavClick(event, '/athletes')}
@@ -117,7 +117,7 @@ function AthleteDetailPage({ athleteId }: AthleteDetailPageProps) {
 
             {/* Dossier sportif : sections nettement séparées par un simple
                 trait, jamais des cards SaaS empilées (ticket §2/§23). */}
-            <div className="mt-8 divide-y divide-gray-100 [&>*]:py-8 [&>*:first-child]:pt-0">
+            <div className="mt-8 divide-y divide-gray-200 [&>*]:py-10 [&>*:first-child]:pt-0">
               <PreparationSection athlete={dashboard} />
               <AttendanceSection athleteId={athleteId} />
               <WeightSection athleteId={athleteId} weight={dashboard.weight} onChanged={refreshAfterWeightChange} />

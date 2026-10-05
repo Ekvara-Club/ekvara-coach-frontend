@@ -46,7 +46,7 @@ function DashboardPage() {
   const firstName = coach?.user.prenom;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <h1 className="font-display text-2xl font-extrabold text-ekvara-black sm:text-3xl">
         Bonjour{firstName ? ` ${firstName}` : ''}
       </h1>
