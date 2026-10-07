@@ -19,7 +19,6 @@ import { LoadingState, ErrorState } from '../components/ui/PageState';
 import Button from '../components/ui/Button';
 import SectionLabel from '../components/ui/SectionLabel';
 import DropdownMenu from '../components/ui/DropdownMenu';
-import AddAthleteModal from '../components/athletes/AddAthleteModal';
 import InviteAthleteModal from '../components/athletes/InviteAthleteModal';
 import PendingInvitationsList from '../components/athletes/PendingInvitationsList';
 import ManageGroupsModal from '../components/athletes/ManageGroupsModal';
@@ -40,7 +39,6 @@ function AthletesPage() {
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
 
-  const [addModalOpen, setAddModalOpen] = useState(false);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [revokingInvitationId, setRevokingInvitationId] = useState<string | null>(null);
   const [manageGroupsAthlete, setManageGroupsAthlete] = useState<CoachAthleteRosterItem | null>(null);
@@ -117,14 +115,10 @@ function AthletesPage() {
           <p className="mt-1 text-sm text-ekvara-black/60">Le roster que tu encadres.</p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <Button variant="secondary" onClick={() => setInviteModalOpen(true)}>
-            Inviter un athlète
+          {/* Seul moyen de rattacher un athlète : il s'inscrit avec ce code. */}
+          <Button variant="primary" onClick={() => setInviteModalOpen(true)}>
+            + Inviter un athlète
           </Button>
-          {athletes && athletes.length > 0 && (
-            <Button variant="primary" onClick={() => setAddModalOpen(true)}>
-              + Ajouter un athlète
-            </Button>
-          )}
         </div>
       </div>
 
@@ -146,8 +140,11 @@ function AthletesPage() {
         {!error && !loading && athletes && athletes.length === 0 && (
           <div className="py-8">
             <p className="font-display text-lg font-bold text-ekvara-black">Aucun athlète rattaché.</p>
-            <Button variant="primary" className="mt-4" onClick={() => setAddModalOpen(true)}>
-              Ajouter un athlète
+            <p className="mt-1 text-sm text-ekvara-black/60">
+              Crée un code d'invitation : l'athlète s'inscrit avec et rejoint ton roster.
+            </p>
+            <Button variant="primary" className="mt-4" onClick={() => setInviteModalOpen(true)}>
+              Inviter un athlète
             </Button>
           </div>
         )}
@@ -216,8 +213,6 @@ function AthletesPage() {
           </>
         )}
       </div>
-
-      {addModalOpen && <AddAthleteModal onClose={() => setAddModalOpen(false)} onAdded={refreshAfterMutation} />}
 
       {inviteModalOpen && (
         <InviteAthleteModal

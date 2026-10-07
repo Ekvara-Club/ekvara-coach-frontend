@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
-// Coquille commune à toutes les modales du ticket #2 (AddAthleteModal,
-// ManageGroupsModal, CreateGroupModal, RenameGroupModal, AddGroupMemberModal,
+// Coquille commune à toutes les modales du ticket #2 (ManageGroupsModal,
+// CreateGroupModal, RenameGroupModal, AddGroupMemberModal,
 // les confirmations destructives) — porté depuis EkvaraFrontend
 // (src/components/ui/Modal.tsx), seule l'habillage visuel change pour
 // coller aux tokens déjà utilisés ici (bg-ekvara-surface, pas bg-white —

@@ -212,10 +212,6 @@ export interface CoachAthleteRosterItem {
   niveauSportif: string | null;
 }
 
-export interface AddCoachAthleteResult {
-  athleteId: string;
-}
-
 // Forme de POST /coach/invitations (voir InvitationsService.createInvitation
 // côté backend) : `code` n'est présent QUE dans cette réponse de création,
 // jamais renvoyé par GET /coach/invitations (le backend ne stocke jamais le

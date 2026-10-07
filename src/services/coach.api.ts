@@ -1,5 +1,4 @@
 import type {
-  AddCoachAthleteResult,
   AttendanceStatus,
   CoachAthleteDashboardSummary,
   CoachAthleteDetailDashboard,
@@ -36,7 +35,7 @@ import type { CompetitionEntriesResponse } from '../types/competition-entries';
 import { apiFetch } from './apiClient';
 
 // Le statut HTTP est conservé (pas seulement le message texte) : permet aux
-// appelants (ex. AddAthleteModal) de mapper vers un wording propre par code,
+// appelants (ex. InviteAthleteModal) de mapper vers un wording propre par code,
 // plutôt que de dépendre du texte exact renvoyé par le backend (ticket #2 §8
 // — ne jamais afficher un message backend brut tel quel).
 export class ApiError extends Error {
@@ -90,10 +89,6 @@ export async function getCoachDashboardAthletes(groupId?: string): Promise<Coach
 
 export async function getCoachAthletes(): Promise<CoachAthleteRosterItem[]> {
   return apiRequest('/coach/athletes');
-}
-
-export async function addCoachAthlete(email: string): Promise<AddCoachAthleteResult> {
-  return apiRequest('/coach/athletes', jsonInit('POST', { email }));
 }
 
 export async function removeCoachAthlete(athleteId: string): Promise<void> {
