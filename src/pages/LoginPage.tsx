@@ -25,13 +25,8 @@ function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-ekvara-surface px-4">
       <div className="w-full max-w-sm">
-        <div className="mb-8 flex flex-col items-center leading-none">
-          <span className="font-display text-2xl font-extrabold tracking-tight text-ekvara-black">
-            EKVARA
-          </span>
-          <span className="mt-1 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-ekvara-muted">
-            Coach
-          </span>
+        <div className="mb-8 flex justify-center">
+          <img src="/logo-coach.png" alt="Ekvara Coach" width={112} height={112} className="h-28 w-28 rounded-2xl" />
         </div>
 
         {/* Session perdue (expirée, remplacée) : on l'explique ici au lieu de
