@@ -45,6 +45,10 @@ vi.mock('./pages/PlanningPage', () => ({ default: () => <p data-testid="page">Pl
 vi.mock('./pages/ExercisesPage', () => ({ default: () => <p data-testid="page">Exercises</p> }));
 vi.mock('./pages/CompetitionsPage', () => ({ default: () => <p data-testid="page">Competitions</p> }));
 vi.mock('./pages/CompetitionDetailPage', () => ({ default: () => <p data-testid="page">CompetitionDetail</p> }));
+vi.mock('./pages/WtAthletesPage', () => ({ default: () => <p data-testid="page">WtAthletes</p> }));
+vi.mock('./pages/WtAthletePage', () => ({
+  default: ({ athleteId }: { athleteId: string }) => <p data-testid="page">WtAthlete:{athleteId}</p>,
+}));
 vi.mock('./pages/NoCoachAccessPage', () => ({ default: () => <p data-testid="page">no-coach-access</p> }));
 vi.mock('./pages/LoginPage', async () => {
   const { useCoachAuth } = await import('./contexts/CoachAuthContext');
@@ -209,5 +213,26 @@ describe('Coach App — garde de routes et session', () => {
 
     expect(reload).not.toHaveBeenCalled();
     Object.defineProperty(window, 'location', { configurable: true, value: original });
+  });
+});
+
+describe('Coach App — explorateur athlètes WT (ticket #24)', () => {
+  it('routes /athletes-wt distinctes du roster /athletes', async () => {
+    api.getCoachMe.mockResolvedValue(coach('c1'));
+    window.history.replaceState({}, '', '/athletes-wt');
+    render(<App />);
+    await waitFor(() => expect(page()).toBe('WtAthletes'));
+
+    act(() => {
+      window.history.pushState({}, '', '/athletes-wt/ext-42');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+    await waitFor(() => expect(page()).toBe('WtAthlete:ext-42'));
+
+    act(() => {
+      window.history.pushState({}, '', '/athletes');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+    await waitFor(() => expect(page()).toBe('Athletes'));
   });
 });

@@ -32,6 +32,7 @@ import type {
   UpdateCoachExerciseInput,
 } from '../types/coach';
 import type { CompetitionEntriesResponse } from '../types/competition-entries';
+import type { CompetitionCatalogScope, CompetitionDetail, PaginatedCompetitions } from '../types/competition';
 import { apiFetch } from './apiClient';
 
 // Le statut HTTP est conservé (pas seulement le message texte) : permet aux
@@ -404,6 +405,35 @@ export async function getCompetitionEntries(competitionId: string): Promise<Comp
 // canonique existant.
 export async function searchCompetitions(search: string): Promise<CompetitionCatalogItem[]> {
   return apiRequest(`/competitions?search=${encodeURIComponent(search)}`);
+}
+
+// Explorateur (ticket #24) : mêmes endpoints globaux que l'app athlète,
+// jamais un second catalogue sous /coach. GET /competitions/:id et
+// /competitions/years acceptent la session coach (JwtAuthGuard seul).
+export async function getCompetitionCatalogPaginated(params: {
+  page: number;
+  limit: number;
+  scope?: CompetitionCatalogScope;
+  search?: string;
+  year?: number;
+}): Promise<PaginatedCompetitions> {
+  const query = new URLSearchParams({ page: String(params.page), limit: String(params.limit) });
+  if (params.scope) query.set('scope', params.scope);
+  if (params.search) query.set('search', params.search);
+  if (params.year !== undefined) query.set('year', String(params.year));
+  return apiRequest(`/competitions?${query.toString()}`);
+}
+
+export async function getCompetitionYears(): Promise<number[]> {
+  const data = await apiRequest<{ years: number[] }>('/competitions/years');
+  return data.years;
+}
+
+// Fiche publique d'une compétition canonique : disponible pour TOUTE
+// compétition du catalogue, contrairement à getCoachCompetitionDetail
+// (403 tant qu'aucun athlète du roster ni aucune préparation n'y est lié).
+export async function getCompetitionById(competitionId: string): Promise<CompetitionDetail> {
+  return apiRequest(`/competitions/${competitionId}`);
 }
 
 export interface CreateCoachCompetitionPreparationPayload {

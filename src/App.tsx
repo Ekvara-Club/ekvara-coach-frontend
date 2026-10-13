@@ -14,6 +14,8 @@ import PlanningPage from './pages/PlanningPage';
 import ExercisesPage from './pages/ExercisesPage';
 import CompetitionsPage from './pages/CompetitionsPage';
 import CompetitionDetailPage from './pages/CompetitionDetailPage';
+import WtAthletesPage from './pages/WtAthletesPage';
+import WtAthletePage from './pages/WtAthletePage';
 
 const PUBLIC_PATHS = ['/login'];
 
@@ -66,6 +68,9 @@ function AppRoutes() {
   const groupDetailMatch = pathname.match(/^\/groups\/([^/]+)$/);
   const athleteDetailMatch = pathname.match(/^\/athletes\/([^/]+)$/);
   const competitionDetailMatch = pathname.match(/^\/competitions\/([^/]+)$/);
+  // Athlètes publics World Taekwondo (external_athlete) : routes distinctes de
+  // /athletes (roster EKVARA du coach), aucun rattachement automatique.
+  const wtAthleteMatch = pathname.match(/^\/athletes-wt\/([^/]+)$/);
 
   // key = id du coach courant : si la session est remplacée par un autre coach,
   // Header et pages sont remontés et ne gardent aucune donnée de l'ancien
@@ -88,7 +93,12 @@ function AppRoutes() {
       ) : pathname === '/competitions' ? (
         <CompetitionsPage />
       ) : competitionDetailMatch ? (
-        <CompetitionDetailPage competitionId={competitionDetailMatch[1]} />
+        <CompetitionDetailPage key={competitionDetailMatch[1]} competitionId={competitionDetailMatch[1]} />
+      ) : pathname === '/athletes-wt' ? (
+        <WtAthletesPage />
+      ) : wtAthleteMatch ? (
+        // key = id : naviguer d'un adversaire à l'autre remonte la page.
+        <WtAthletePage key={wtAthleteMatch[1]} athleteId={wtAthleteMatch[1]} />
       ) : (
         <DashboardPage />
       )}

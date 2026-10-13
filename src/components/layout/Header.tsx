@@ -17,7 +17,15 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Planning', href: '/planning' },
   { label: 'Exercices', href: '/exercises' },
   { label: 'Compétitions', href: '/competitions' },
+  { label: 'Athlètes WT', href: '/athletes-wt' },
 ];
+
+// Actif aussi sur les pages de détail (/athletes/:id, /groups/:id…), mais
+// jamais par simple préfixe : /athletes-wt ne doit pas allumer "Athlètes".
+export function isNavItemActive(href: string, pathname: string): boolean {
+  if (href === '/') return pathname === '/';
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 function Header() {
   const { coach, logout } = useCoachAuth();
@@ -77,8 +85,7 @@ function Header() {
             « Compétitions » ; desktop inchangé. */}
         <nav className="order-3 -mx-4 flex w-[calc(100%+2rem)] flex-nowrap items-center gap-x-5 overflow-x-auto px-4 [scrollbar-width:none] sm:order-2 sm:mx-0 sm:w-auto sm:overflow-visible sm:px-0 sm:gap-x-6">
           {NAV_ITEMS.map((item) => {
-            // Actif aussi sur les pages de détail (/athletes/:id, /groups/:id…).
-            const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+            const isActive = isNavItemActive(item.href, pathname);
             return (
               <a
                 key={item.label}
