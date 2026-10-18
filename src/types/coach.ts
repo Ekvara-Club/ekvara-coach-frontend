@@ -341,6 +341,14 @@ export interface CoachGroupDashboard {
 // jamais un type dupliqué en apparence identique mais divergent en silence.
 export type CoachAthleteDetailDashboard = CoachAthleteDashboardSummary;
 
+// Mensurations déclarées par l'athlète (cm entiers, null = non renseigné),
+// lues dans GET /coach/athletes/:athleteId (colonnes athlete taille_cm /
+// longueur_bras_cm). Lecture seule côté coach.
+export interface CoachAthleteMeasurements {
+  tailleCm: number | null;
+  longueurBrasCm: number | null;
+}
+
 // Ticket #3 §8-11 : forme de GET /coach/athletes/:athleteId/metrics/overview
 // (voir MetricsService.getOverview -> toOverviewEntry). `direction` reste
 // `string | null` (pas un union étroit) : improvement_direction est une
