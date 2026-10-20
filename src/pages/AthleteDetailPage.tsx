@@ -11,6 +11,7 @@ import { LoadingState, ErrorState } from '../components/ui/PageState';
 import AthleteHeader from '../components/athlete-detail/AthleteHeader';
 import PreparationSection from '../components/athlete-detail/PreparationSection';
 import WeightSection from '../components/athlete-detail/WeightSection';
+import MeasurementsSection from '../components/athlete-detail/MeasurementsSection';
 import ProgressionSection from '../components/athlete-detail/ProgressionSection';
 import GoalsSection from '../components/athlete-detail/GoalsSection';
 import AttendanceSection from '../components/athlete-detail/AttendanceSection';
@@ -120,6 +121,7 @@ function AthleteDetailPage({ athleteId }: AthleteDetailPageProps) {
             <div className="mt-8 divide-y divide-gray-200 [&>*]:py-10 [&>*:first-child]:pt-0">
               <PreparationSection athlete={dashboard} />
               <AttendanceSection athleteId={athleteId} />
+              <MeasurementsSection athleteId={athleteId} />
               <WeightSection athleteId={athleteId} weight={dashboard.weight} onChanged={refreshAfterWeightChange} />
               <ProgressionSection
                 athleteId={athleteId}

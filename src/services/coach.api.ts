@@ -2,6 +2,7 @@ import type {
   AttendanceStatus,
   CoachAthleteDashboardSummary,
   CoachAthleteDetailDashboard,
+  CoachAthleteMeasurements,
   CoachAthleteRosterItem,
   CoachAttendanceSummary,
   CoachCompetitionDetailView,
@@ -173,6 +174,14 @@ export async function saveClubMetricScales(
 
 export async function getCoachAthleteDashboard(athleteId: string): Promise<CoachAthleteDetailDashboard> {
   return apiRequest(`/coach/athletes/${athleteId}/dashboard`);
+}
+
+// Fiche athlète (GET /coach/athletes/:athleteId, accès réservé à ses
+// coachs) : seules les mensurations en sont retenues. Champs absents
+// (backend antérieur) -> non renseigné.
+export async function getCoachAthleteMeasurements(athleteId: string): Promise<CoachAthleteMeasurements> {
+  const athlete = await apiRequest<{ taille_cm?: number | null; longueur_bras_cm?: number | null }>(`/coach/athletes/${athleteId}`);
+  return { tailleCm: athlete.taille_cm ?? null, longueurBrasCm: athlete.longueur_bras_cm ?? null };
 }
 
 export async function createCoachWeightTarget(
